@@ -15,16 +15,13 @@ module.exports = {
         allowNull: false
       },
       clock_in: {
-        type: Sequelize.TIME,
-        allowNull: false
+        type: Sequelize.TIME
       },
       clock_out: {
-        type: Sequelize.TIME,
-        allowNull: false
+        type: Sequelize.TIME
       },
       foto: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: Sequelize.STRING
       },
       createdAt: {
         type: Sequelize.DATE,
