@@ -1,38 +1,40 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define['User', {
+    const Company = sequelize.define['Company', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
             allowNull: false
           },
-          company_id: {
+          nama: {
             type: DataTypes.INTEGER,
             allowNull: false
           },
           email: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+          },
+          logo: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: "default-logo.png"
+          },
+          address: {
             type: DataTypes.STRING,
             allowNull: false
           },
-          password: {
+          jatah_cuti: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+          },
+          no_hp: {
             type: DataTypes.STRING,
             allowNull: false
           },
-          position: {
-            type: DataTypes.STRING,
-            allowNull: false
-          },
-          role: {
-            type: DataTypes.STRING,
-            allowNull: false
-          },
-          foto_profil: {
+          web: {
             type: DataTypes.STRING
-          },
-          sisa_cuti: {
-            type: DataTypes.INTEGER
           },
           createdAt: {
             type: DataTypes.DATE,
@@ -43,8 +45,8 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
           },
     }, {
-        tableName : 'users'
+        tableName: 'companies'
     }];
 
-    return User;
+    return Company;
 }

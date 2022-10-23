@@ -1,38 +1,28 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define['User', {
+    const Precense = sequelize.define['Precense', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
             allowNull: false
           },
-          company_id: {
+          user_id: {
             type: DataTypes.INTEGER,
             allowNull: false
           },
-          email: {
-            type: DataTypes.STRING,
+          clock_in: {
+            type: DataTypes.TIME,
             allowNull: false
           },
-          password: {
-            type: DataTypes.STRING,
+          clock_out: {
+            type: DataTypes.TIME,
             allowNull: false
           },
-          position: {
+          foto: {
             type: DataTypes.STRING,
             allowNull: false
-          },
-          role: {
-            type: DataTypes.STRING,
-            allowNull: false
-          },
-          foto_profil: {
-            type: DataTypes.STRING
-          },
-          sisa_cuti: {
-            type: DataTypes.INTEGER
           },
           createdAt: {
             type: DataTypes.DATE,
@@ -43,8 +33,8 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
           },
     }, {
-        tableName : 'users'
+        tableName: "precenses"
     }];
 
-    return User;
+    return Precense;
 }

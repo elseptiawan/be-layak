@@ -1,38 +1,43 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define['User', {
+    const Reimbursement = sequelize.define['Reimbursement', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
             allowNull: false
           },
-          company_id: {
+          user_id: {
             type: DataTypes.INTEGER,
             allowNull: false
           },
-          email: {
+          jumlah_uang: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+          },
+          tanggal_pembayaran: {
+            type: DataTypes.DATEONLY,
+            allowNull: false
+          },
+          bukti_pembayaran: {
             type: DataTypes.STRING,
             allowNull: false
           },
-          password: {
+          kebutuhan: {
             type: DataTypes.STRING,
             allowNull: false
           },
-          position: {
-            type: DataTypes.STRING,
-            allowNull: false
-          },
-          role: {
-            type: DataTypes.STRING,
-            allowNull: false
-          },
-          foto_profil: {
+          bukti_reimburse: {
             type: DataTypes.STRING
           },
-          sisa_cuti: {
-            type: DataTypes.INTEGER
+          status: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: "Pending"
+          },
+          alasan_ditolak: {
+            type: DataTypes.TEXT
           },
           createdAt: {
             type: DataTypes.DATE,
@@ -43,8 +48,8 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
           },
     }, {
-        tableName : 'users'
+        tableName: 'reimbursements'
     }];
 
-    return User;
+    return Reimbursement;
 }

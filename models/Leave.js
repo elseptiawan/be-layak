@@ -1,38 +1,40 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define['User', {
+    const Leave = sequelize.define['Leave', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
             allowNull: false
           },
-          company_id: {
+          user_id: {
             type: DataTypes.INTEGER,
             allowNull: false
           },
-          email: {
+          tipe_cuti: {
             type: DataTypes.STRING,
             allowNull: false
           },
-          password: {
+          start_date: {
+            type: DataTypes.DATEONLY,
+            allowNull: false
+          },
+          end_date: {
+            type: DataTypes.DATEONLY,
+            allowNull: false
+          },
+          status: {
+            type: DataTypes.STRING,
+            defaultValue: "Pending",
+            allowNull: false
+          },
+          surat_cuti: {
             type: DataTypes.STRING,
             allowNull: false
           },
-          position: {
-            type: DataTypes.STRING,
-            allowNull: false
-          },
-          role: {
-            type: DataTypes.STRING,
-            allowNull: false
-          },
-          foto_profil: {
-            type: DataTypes.STRING
-          },
-          sisa_cuti: {
-            type: DataTypes.INTEGER
+          alasan_ditolak: {
+            type: DataTypes.TEXT
           },
           createdAt: {
             type: DataTypes.DATE,
@@ -43,8 +45,8 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
           },
     }, {
-        tableName : 'users'
+        tableName: 'leaves'
     }];
 
-    return User;
+    return Leave;
 }
