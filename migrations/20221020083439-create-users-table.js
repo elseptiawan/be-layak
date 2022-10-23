@@ -10,6 +10,10 @@ module.exports = {
         autoIncrement: true,
         allowNull: false
       },
+      company_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
       email: {
         type: Sequelize.STRING,
         allowNull: false
@@ -27,7 +31,12 @@ module.exports = {
         allowNull: false
       },
       foto_profil: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: "default-profil.png"
+      },
+      sisa_cuti: {
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         type: Sequelize.DATE,

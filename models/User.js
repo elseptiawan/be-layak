@@ -1,9 +1,15 @@
+const { DataTypes } = require("sequelize");
+
 module.exports = (sequelize, Datatypes) => {
     const User = sequelize.define['User', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
+            allowNull: false
+          },
+          company_id: {
+            type: DataTypes.INTEGER,
             allowNull: false
           },
           email: {
@@ -24,6 +30,9 @@ module.exports = (sequelize, Datatypes) => {
           },
           foto_profil: {
             type: DataTypes.STRING
+          },
+          sisa_cuti: {
+            type: DataTypes.INTEGER
           },
           createdAt: {
             type: DataTypes.DATE,
