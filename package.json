@@ -10,6 +10,7 @@
     "debug": "~2.6.9",
     "dotenv": "^16.0.3",
     "express": "~4.16.1",
+    "fastest-validator": "^1.15.0",
     "morgan": "~1.9.1",
     "mysql2": "^2.3.3",
     "sequelize": "^6.25.3",
