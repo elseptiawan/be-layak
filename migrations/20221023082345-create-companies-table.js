@@ -21,7 +21,7 @@ module.exports = {
       logo: {
         type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: "default.png"
+        defaultValue: "default-logo.png"
       },
       address: {
         type: Sequelize.STRING,
