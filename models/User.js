@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define['User', {
+    const User = sequelize.define('User', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -44,7 +44,25 @@ module.exports = (sequelize, DataTypes) => {
           },
     }, {
         tableName : 'users'
-    }];
+    });
+    User.associate = function(models) {
+        User.hasMany(models.Precense, {
+            foreignKey: 'user_id',
+            as: 'precenses'
+        });
+        User.hasMany(models.Leave, {
+            foreignKey: 'user_id',
+            as: 'leaves'
+        });
+        User.hasMany(models.Reimbursement, {
+            foreignKey: 'user_id',
+            as: 'reimbursements'
+        });
+        User.belongsTo(models.Company, {
+            foreignKey: 'company_id',
+            as: 'company'
+        });
+    }
 
     return User;
 }

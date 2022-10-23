@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-    const Precense = sequelize.define['Precense', {
+    const Precense = sequelize.define('Precense', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
           },
     }, {
         tableName: "precenses"
-    }];
+    });
 
     return Precense;
 }
