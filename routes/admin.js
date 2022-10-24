@@ -24,13 +24,10 @@ router.post('/users', async (req, res) => {
         return res.status(400).json(validate);
     }
 
-    const company = await Company.findOne({
-        where: {
-            id: req.body.company_id
-        }
-    });
+    const company = await Company.findOne({id: req.body.company_id});
 
     const user = await User.create({
+        nama: req.body.nama,
         email: req.body.email,
         password: bcrypt.hashSync(req.body.password, salt),
         position: req.body.position,
