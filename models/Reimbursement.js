@@ -50,6 +50,12 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         tableName: 'reimbursements'
     });
+    Reimbursement.associate = function(models) {
+      Reimbursement.belongsTo(models.User, {
+          foreignKey: 'user_id',
+          as: 'user'
+      });
+  }
 
     return Reimbursement;
 }
