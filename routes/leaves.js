@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
         include: ["user"]
     });
 
-    res.json(leave); 
+    res.json({success: "true", messages: "Data retrieved successfully", data: leave}); 
 });
 
 router.get('/:id', async (req, res) => {
@@ -17,7 +17,7 @@ router.get('/:id', async (req, res) => {
         include: ["user"]
     });
 
-    res.json(leave || {}); 
+    res.json({success: "true", messages: "Data retrieved successfully", data: leave || {}}); 
 });
 
 
