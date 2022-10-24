@@ -8,6 +8,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var adminRouter = require('./routes/admin');
 var dashboardRouter = require('./routes/dashboard');
+var leavesRouter = require('./routes/leaves');
+var reimbursementRouter = require('./routes/reimbursement');
 
 var app = express();
 
@@ -21,5 +23,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/admin', adminRouter);
 app.use('/dashboard', dashboardRouter);
+app.use('/leaves', leavesRouter);
+app.use('/reimbursement', reimbursementRouter);
 
 module.exports = app;
