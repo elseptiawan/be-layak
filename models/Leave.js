@@ -47,6 +47,12 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         tableName: 'leaves'
     });
+    Leave.associate = function(models) {
+      Leave.belongsTo(models.User, {
+          foreignKey: 'user_id',
+          as: 'user'
+      });
+  }
 
     return Leave;
 }
