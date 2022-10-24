@@ -1,6 +1,6 @@
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
-var {User} = require('../models');
+var User = require('../models');
 
 // POST /auth/login
 exports.login = function(req, res) {
