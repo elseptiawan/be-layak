@@ -1,9 +1,28 @@
 var express = require('express');
 var router = express.Router();
 const Validator = require('fastest-validator');
+const multer = require('multer');
 
 const { Leave } = require('../models');
 const v = new Validator();
+
+const multerDiskStorage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'Storages/Leaves');
+    },
+    filename: function(req, file, cb) {
+        const originalName = file.originalname;
+        const nameArr = originalName.split('.');
+        var extension = '';
+        if (nameArr.length > 1){
+            extension = nameArr[nameArr.length - 1];
+        }
+
+        cb(null, file.fieldname +'-'+ Date.now() +'-'+ extension);
+    }
+});
+
+const multerUpload = multer({storage: multerDiskStorage});
 
 router.get('/', async (req, res) => {
     const leave = await Leave.findAll({
@@ -22,7 +41,7 @@ router.get('/:id', async (req, res) => {
     res.json({success: "true", messages: "Data retrieved successfully", data: leave || {}}); 
 });
 
-router.post('/', async (req, res) => {
+router.post('/', multerUpload.single('surat_cuti'), async (req, res) => {
     const schema = {
         tipe_cuti: 'string',
         start_date: {
@@ -32,8 +51,7 @@ router.post('/', async (req, res) => {
         end_date: {
             type: "date",
             convert: true
-        },
-        surat_cuti: 'string'
+        }
     }
 
     const validate = v.validate(req.body, schema);
@@ -42,12 +60,17 @@ router.post('/', async (req, res) => {
         return res.status(400).json(validate);
     }
 
+    const surat_cuti = req.file;
+    if(!surat_cuti){
+        return res.status(400).json({success: "false", messages: "Surat Cuti cannot be empty"});
+    }
+
     const leave = await Leave.create({
         user_id: req.body.user_id,
         tipe_cuti: req.body.tipe_cuti,
         start_date: req.body.start_date,
         end_date: req.body.end_date,
-        surat_cuti: req.body.surat_cuti
+        surat_cuti: surat_cuti.filename
     });
 
     res.json({success: "true", messages: "Your application for leave is success", data: leave}); 
