@@ -26,25 +26,29 @@ const multerDiskStorage = multer.diskStorage({
 const multerUpload = multer({storage: multerDiskStorage});
 
 router.get('/', async (req, res) => {
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    var yyyy = today.getFullYear();
+    // var nowDate = new Date(); 
+    // var date = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate(); 
+    // return res.send(date);
+    // var today = new Date();
+    // var dd = String(today.getDate()).padStart(2, '0');
+    // var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    // var yyyy = today.getFullYear();
 
-    today = yyyy + '-' + mm + '-' + dd;
+    // today = yyyy + '-' + mm + '-' + dd;
+    // return res.send(date);
     const { Op } = require("sequelize");
-    const {presenceToday, created} = await Presence.findOrCreate({
+    const presenceToday = await Presence.findOrCreate({
         where: {
-            createdAt: {[Op.like]: '%'+yyyy + '-' + mm + '-' + dd+'%'},
+            createdAt: {
+                [Op.lt]: new Date(),
+                [Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)
+              },
         },
         defaults: {
             user_id: 1,
             createdAt: Date()
         }
     });
-    if(created){
-        return res.send(presenceToday);
-    }
     const presences = await Presence.findAll({
         include: ["user"]
     });
