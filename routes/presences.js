@@ -27,11 +27,15 @@ const multerDiskStorage = multer.diskStorage({
 const multerUpload = multer({storage: multerDiskStorage});
 
 router.get('/', async (req, res) => {
+    var nowDate = new Date(); 
+    var date = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate(); 
+    // var today = new Date();
+    // var time = today.getHours() + ":" + today.getMinutes() + ':' + today.getSeconds();
     const presenceToday = await Presence.findOrCreate({
         where: {
             createdAt: {
                 [Op.lt]: new Date(),
-                [Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)
+                [Op.gt]: date
               },
         },
         defaults: {
@@ -47,6 +51,8 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/clock-in', multerUpload.single('foto'), async (req, res) => {
+    var nowDate = new Date(); 
+    var date = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate();
     var today = new Date();
     var time = today.getHours() + ":" + today.getMinutes();
     const foto = req.file;
@@ -62,7 +68,7 @@ router.post('/clock-in', multerUpload.single('foto'), async (req, res) => {
         where: {
             createdAt: {
                 [Op.lt]: new Date(),
-                [Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)
+                [Op.gt]: date
             },
             user_id: 1
         }
@@ -72,6 +78,8 @@ router.post('/clock-in', multerUpload.single('foto'), async (req, res) => {
 });
 
 router.post('/clock-out', async (req, res) => {
+    var nowDate = new Date(); 
+    var date = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate();
     var today = new Date();
     var time = today.getHours() + ":" + today.getMinutes();
 
@@ -82,9 +90,11 @@ router.post('/clock-out', async (req, res) => {
         where: {
             createdAt: {
                 [Op.lt]: new Date(),
-                [Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)
+                [Op.gt]: date
             },
-            user_id: 1
+            user_id: {
+                [Op.eq]: 1
+            }
         }
     });
 
