@@ -59,7 +59,7 @@ router.post('/', multerUpload.single('bukti_pembayaran'), async (req, res) => {
 
     const bukti_pembayaran = req.file;
     if(!bukti_pembayaran){
-        return res.status(400).json({success: "false", messages: "Surat Cuti cannot be empty"});
+        return res.status(400).json({success: "false", messages: "Bukti Pembayaran cannot be empty"});
     }
 
     const reimbursement = await Reimbursement.create({
