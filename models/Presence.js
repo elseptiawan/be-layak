@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-    const Precense = sequelize.define('Precense', {
+    const Presence = sequelize.define('Presence', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -13,16 +13,13 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
           },
           clock_in: {
-            type: DataTypes.TIME,
-            allowNull: false
+            type: DataTypes.TIME
           },
           clock_out: {
-            type: DataTypes.TIME,
-            allowNull: false
+            type: DataTypes.TIME
           },
           foto: {
-            type: DataTypes.STRING,
-            allowNull: false
+            type: DataTypes.STRING
           },
           createdAt: {
             type: DataTypes.DATE,
@@ -33,8 +30,14 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
           },
     }, {
-        tableName: "precenses"
+        tableName: "presences"
     });
+    Presence.associate = function(models) {
+      Presence.belongsTo(models.User, {
+          foreignKey: 'user_id',
+          as: 'user'
+      });
+  }
 
-    return Precense;
+    return Presence;
 }

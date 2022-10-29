@@ -51,9 +51,9 @@ module.exports = (sequelize, DataTypes) => {
         tableName : 'users'
     });
     User.associate = function(models) {
-        User.hasMany(models.Precense, {
+        User.hasMany(models.Presence, {
             foreignKey: 'user_id',
-            as: 'precenses'
+            as: 'presences'
         });
         User.hasMany(models.Leave, {
             foreignKey: 'user_id',
