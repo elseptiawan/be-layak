@@ -6,6 +6,7 @@ const multer = require('multer');
 
 const { Presence } = require('../models');
 const v = new Validator();
+const { Op } = require("sequelize");
 
 const multerDiskStorage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -26,17 +27,6 @@ const multerDiskStorage = multer.diskStorage({
 const multerUpload = multer({storage: multerDiskStorage});
 
 router.get('/', async (req, res) => {
-    // var nowDate = new Date(); 
-    // var date = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate(); 
-    // return res.send(date);
-    // var today = new Date();
-    // var dd = String(today.getDate()).padStart(2, '0');
-    // var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    // var yyyy = today.getFullYear();
-
-    // today = yyyy + '-' + mm + '-' + dd;
-    // return res.send(date);
-    const { Op } = require("sequelize");
     const presenceToday = await Presence.findOrCreate({
         where: {
             createdAt: {
@@ -54,6 +44,51 @@ router.get('/', async (req, res) => {
     });
 
     res.json({success: "true", messages: "Data retrieved successfully", data: presences}); 
+});
+
+router.post('/clock-in', multerUpload.single('foto'), async (req, res) => {
+    var today = new Date();
+    var time = today.getHours() + ":" + today.getMinutes();
+    const foto = req.file;
+    if(!foto){
+        return res.status(400).json({success: "false", messages: "Foto cannot be empty"});
+    }
+
+    const presence = await Presence.update({
+        clock_in: time,
+        foto: foto.filename
+    },
+    {
+        where: {
+            createdAt: {
+                [Op.lt]: new Date(),
+                [Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)
+            },
+            user_id: 1
+        }
+    });
+
+    res.json({success: "true", messages: "You have been clocked in succesfully, don't forget to clock out"}); 
+});
+
+router.post('/clock-out', async (req, res) => {
+    var today = new Date();
+    var time = today.getHours() + ":" + today.getMinutes();
+
+    const presence = await Presence.update({
+        clock_out: time
+    },
+    {
+        where: {
+            createdAt: {
+                [Op.lt]: new Date(),
+                [Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)
+            },
+            user_id: 1
+        }
+    });
+
+    res.json({success: "true", messages: "You have been clocked out succesfully"}); 
 });
 
 module.exports = router;
