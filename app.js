@@ -12,7 +12,7 @@ var adminRouter = require('./routes/admin');
 var dashboardRouter = require('./routes/dashboard');
 var leavesRouter = require('./routes/leaves');
 var reimbursementRouter = require('./routes/reimbursement');
-var loginRouter = require('./routes/login');
+var authRouter = require('./routes/auth');
 var presencesRouter = require('./routes/presences');
 var profilesRouter = require('./routes/profiles');
 
@@ -32,7 +32,7 @@ app.use('/admin', adminRouter);
 app.use('/dashboard', dashboardRouter);
 app.use('/leaves', leavesRouter);
 app.use('/reimbursement', reimbursementRouter);
-app.use('/login', loginRouter);
+app.use('/auth', authRouter);
 app.use('/presences', presencesRouter);
 app.use('/profiles', profilesRouter);
 
@@ -49,6 +49,11 @@ app.use(function(err, req, res, next) {
         message: err.message,
         error: err
       });
+});
+
+const PORT=process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Our app is running on port ${ PORT }`);
 });
 
 module.exports = app;
