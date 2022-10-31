@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const Validator = require('fastest-validator');
 const multer = require('multer');
+const { verifyToken, checkUser } = require('../middleware/authJWT.js');
 
 const { Reimbursement } = require('../models');
 const v = new Validator();
@@ -24,15 +25,20 @@ const multerDiskStorage = multer.diskStorage({
 
 const multerUpload = multer({storage: multerDiskStorage});
 
-router.get('/', async (req, res) => {
+router.get('*', checkUser);
+router.post('*', checkUser);
+router.get('/', verifyToken, async (req, res) => {
     const reimbursement = await Reimbursement.findAll({
+        where: {
+            user_id: req.id
+        },
         include: ["user"]
     });
 
     res.json({success: "true", messages: "Data retrieved successfully", data: reimbursement}); 
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', verifyToken, async (req, res) => {
     const id = req.params.id;
     const reimbursement = await Reimbursement.findByPk(id, {
         include: ["user"]
@@ -41,7 +47,7 @@ router.get('/:id', async (req, res) => {
     res.json({success: "true", messages: "Data retrieved successfully", data: reimbursement || {}});
 });
 
-router.post('/', multerUpload.single('bukti_pembayaran'), async (req, res) => {
+router.post('/', verifyToken, multerUpload.single('bukti_pembayaran'), async (req, res) => {
     const schema = {
         jumlah_uang: 'string',
         tanggal_pembayaran: {
@@ -63,7 +69,7 @@ router.post('/', multerUpload.single('bukti_pembayaran'), async (req, res) => {
     }
 
     const reimbursement = await Reimbursement.create({
-        user_id: req.body.user_id,
+        user_id: req.id,
         jumlah_uang: parseInt(req.body.jumlah_uang),
         tanggal_pembayaran: req.body.tanggal_pembayaran,
         bukti_pembayaran: bukti_pembayaran.filename,

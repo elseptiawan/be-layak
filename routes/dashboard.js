@@ -1,15 +1,20 @@
 var express = require('express');
 var router = express.Router();
-const { verifyToken } = require('../middleware/authJWT.js');
+const { verifyToken, checkUser } = require('../middleware/authJWT.js');
 
 const { User } = require('../models');
 
+router.get('*', checkUser);
 router.get('/', verifyToken, async (req, res) => {
-    const user = await User.findAll({
-        include: ["presences", "leaves", "reimbursements", "company"]
+    const userId = req.id;
+    const user = await User.findByPk(userId, {
+        include: ["presences", "leaves", "reimbursements", "company"],
+        attributes: {
+            exclude: ['password']
+        }
     });
 
-    res.json(user);
+    res.json({success: "true", messages: "Data retrieved successfully", data: user});
 });
 
 module.exports = router;

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const Validator = require('fastest-validator');
 const multer = require('multer');
+const { verifyToken, checkUser } = require('../middleware/authJWT.js');
 
 const { Leave } = require('../models');
 const v = new Validator();
@@ -24,15 +25,20 @@ const multerDiskStorage = multer.diskStorage({
 
 const multerUpload = multer({storage: multerDiskStorage});
 
-router.get('/', async (req, res) => {
+router.get('*', checkUser);
+router.post('*', checkUser);
+router.get('/', verifyToken, async (req, res) => {
     const leave = await Leave.findAll({
+        where: {
+            user_id: req.id
+        },
         include: ["user"]
     });
 
     res.json({success: "true", messages: "Data retrieved successfully", data: leave}); 
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', verifyToken, async (req, res) => {
     const id = req.params.id;
     const leave = await Leave.findByPk(id, {
         include: ["user"]
@@ -41,7 +47,7 @@ router.get('/:id', async (req, res) => {
     res.json({success: "true", messages: "Data retrieved successfully", data: leave || {}}); 
 });
 
-router.post('/', multerUpload.single('surat_cuti'), async (req, res) => {
+router.post('/', verifyToken, multerUpload.single('surat_cuti'), async (req, res) => {
     const schema = {
         tipe_cuti: 'string',
         start_date: {
@@ -66,7 +72,7 @@ router.post('/', multerUpload.single('surat_cuti'), async (req, res) => {
     }
 
     const leave = await Leave.create({
-        user_id: req.body.user_id,
+        user_id: req.id,
         tipe_cuti: req.body.tipe_cuti,
         start_date: req.body.start_date,
         end_date: req.body.end_date,

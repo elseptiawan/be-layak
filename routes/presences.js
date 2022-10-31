@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
+const { verifyToken, checkUser } = require('../middleware/authJWT.js');
 const Validator = require('fastest-validator');
 const multer = require('multer');
 
@@ -26,31 +27,37 @@ const multerDiskStorage = multer.diskStorage({
 
 const multerUpload = multer({storage: multerDiskStorage});
 
-router.get('/', async (req, res) => {
+router.get('*', checkUser);
+router.post('*', checkUser);
+router.get('/', verifyToken, async (req, res) => {
     var nowDate = new Date(); 
     var date = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate(); 
     // var today = new Date();
     // var time = today.getHours() + ":" + today.getMinutes() + ':' + today.getSeconds();
     const presenceToday = await Presence.findOrCreate({
         where: {
+            user_id: req.id,
             createdAt: {
                 [Op.lt]: new Date(),
                 [Op.gt]: date
               },
         },
         defaults: {
-            user_id: 1,
+            user_id: req.id,
             createdAt: Date()
         }
     });
     const presences = await Presence.findAll({
+        where: {
+            user_id: req.id
+        },
         include: ["user"]
     });
 
     res.json({success: "true", messages: "Data retrieved successfully", data: presences}); 
 });
 
-router.post('/clock-in', multerUpload.single('foto'), async (req, res) => {
+router.post('/clock-in', verifyToken, multerUpload.single('foto'), async (req, res) => {
     var nowDate = new Date(); 
     var date = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate();
     var today = new Date();
@@ -70,14 +77,14 @@ router.post('/clock-in', multerUpload.single('foto'), async (req, res) => {
                 [Op.lt]: new Date(),
                 [Op.gt]: date
             },
-            user_id: 1
+            user_id: req.id
         }
     });
 
     res.json({success: "true", messages: "You have been clocked in succesfully, don't forget to clock out"}); 
 });
 
-router.post('/clock-out', async (req, res) => {
+router.post('/clock-out', verifyToken, async (req, res) => {
     var nowDate = new Date(); 
     var date = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate();
     var today = new Date();
@@ -93,7 +100,7 @@ router.post('/clock-out', async (req, res) => {
                 [Op.gt]: date
             },
             user_id: {
-                [Op.eq]: 1
+                [Op.eq]: req.id
             }
         }
     });
