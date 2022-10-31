@@ -4,6 +4,7 @@ const Validator = require('fastest-validator');
 const multer = require('multer');
 var bcrypt = require('bcrypt');
 var salt = bcrypt.genSaltSync(10);
+const { verifyToken, checkUser } = require('../middleware/authJWT.js');
 
 const { User } = require('../models');
 const v = new Validator();
@@ -26,7 +27,8 @@ const multerDiskStorage = multer.diskStorage({
 
 const multerUpload = multer({storage: multerDiskStorage});
 
-router.put('/edit-password', async (req, res) => {
+router.put('*', checkUser);
+router.put('/edit-password', verifyToken, async (req, res) => {
     const schema = {
         password: 'string',
         new_password: 'string',
@@ -39,7 +41,7 @@ router.put('/edit-password', async (req, res) => {
         return res.status(400).json(validate);
     }
 
-    var user = await User.findByPk(1);
+    var user = await User.findByPk(req.id);
 
     if (!bcrypt.compareSync(req.body.password, user.password)){
         return res.status(400).json({success: "false", messages: "Password Uncorrected"})
@@ -56,13 +58,13 @@ router.put('/edit-password', async (req, res) => {
     res.json({success: "true", messages: "Your password have been changed succesfully"})
 });
 
-router.put('/edit-photo', multerUpload.single('foto_profil'), async (req, res) => {
+router.put('/edit-photo', verifyToken, multerUpload.single('foto_profil'), async (req, res) => {
     const foto_profil = req.file;
     if(!foto_profil){
         return res.status(400).json({success: "false", messages: "Foto Profil cannot be empty"});
     }
 
-    var user = await User.findByPk(1);
+    var user = await User.findByPk(req.id);
 
     user = await user.update({
         foto_profil: foto_profil.filename
