@@ -2,6 +2,7 @@ require('dotenv').config();
 var express = require('express');
 var multer = require('multer');
 var bodyParser = require('body-parser');
+var cors = require('cors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -18,6 +19,7 @@ var profilesRouter = require('./routes/profiles');
 
 var app = express();
 
+app.use(cors({ credentials:true, origin:'http://localhost:3000'}));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -32,7 +34,7 @@ app.use('/admin', adminRouter);
 app.use('/dashboard', dashboardRouter);
 app.use('/leaves', leavesRouter);
 app.use('/reimbursement', reimbursementRouter);
-app.use('/login', loginRouter);
+app.use('/auth', loginRouter);
 app.use('/presences', presencesRouter);
 app.use('/profiles', profilesRouter);
 
