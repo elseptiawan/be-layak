@@ -41,7 +41,10 @@ router.get('/presences', verifyToken, async (req, res) => {
             createdAt: {
                 [Op.lt]: new Date(),
                 [Op.gt]: date
-              }
+              },
+            clock_in: {
+                [Op.ne]: null
+            }
         },
         include: {
             model: User,
@@ -59,10 +62,20 @@ router.get('/presences', verifyToken, async (req, res) => {
 });
 
 router.get('/presences/yet', verifyToken, async (req, res) => {
-    return res.send('KALEM BOS BELUM JALAN')
     var nowDate = new Date(); 
     var date = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate();
     const admin = await User.findByPk(req.id);
+    const checkpresences = await Presence.findAll({
+        where: {
+            createdAt: {
+                [Op.lt]: new Date(),
+                [Op.gt]: date
+            },
+            '$user.company_id$': admin.company_id
+        },
+        include: ['user']
+    });
+
     const user = await User.findAll({
         where: {
             company_id: admin.company_id,
@@ -72,39 +85,37 @@ router.get('/presences/yet', verifyToken, async (req, res) => {
             exclude: ['password']
         }
     });
-    const user_id = await Presence.findAll({
-        attributes: ['user_id'],
-        where: {
-            createdAt: {
-                [Op.lt]: new Date(),
-                [Op.gt]: date
-            }
-        }
-    });
-    user.forEach(async function(entry) {
-        user_id.forEach(async function(en){
-            if(en == entry.id){
-                return;
-            }
-            const test = await Presence.create({
+
+    if (Object.keys(checkpresences).length === 0){
+        const createpresence = user.forEach(async function(entry) {
+            await Presence.create({
                 user_id: entry.id
             });
-            return res.json(test);
         });
-        if (!user_id.includes(entry.id)){
-            return res.send('OK');
-            // await Presence.create({
-            //     user_id: entry.id
-            // });
-        }
-    });
-    return res.send('KO');
+    }
+
+    else{
+        var user_id = [];
+        checkpresences.forEach(function(en){
+            user_id.push(en.user_id);
+        });
+        user.forEach(async function(ent) {
+            if(user_id.includes(ent.id)) {
+                return;
+            }
+            const createpresence = await Presence.create({
+                user_id: ent.id
+            });
+        });
+    }
+
     const presences = await Presence.findAll({
         where: {
             createdAt: {
                 [Op.lt]: new Date(),
                 [Op.gt]: date
             },
+            '$user.company_id$': admin.company_id,
             clock_in: null
         },
         include: {
@@ -112,12 +123,12 @@ router.get('/presences/yet', verifyToken, async (req, res) => {
             as: 'user',
             attributes: {
                 exclude: ['password']
-            },
-            where: {
-                company_id: admin.company_id
             }
         }
-    })
+    });
+
+    // presences = { ...presences, ...getpresences };
+    // // presences.push(...getpresences)
 
     res.json({success: "true", messages: "Data retrieved successfully", data: presences})
 });
