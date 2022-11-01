@@ -31,9 +31,7 @@ router.get('*', checkUser);
 router.post('*', checkUser);
 router.get('/', verifyToken, async (req, res) => {
     var nowDate = new Date(); 
-    var date = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate(); 
-    // var today = new Date();
-    // var time = today.getHours() + ":" + today.getMinutes() + ':' + today.getSeconds();
+    var date = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate();
     const presenceToday = await Presence.findOrCreate({
         where: {
             user_id: req.id,
@@ -55,6 +53,14 @@ router.get('/', verifyToken, async (req, res) => {
     });
 
     res.json({success: "true", messages: "Data retrieved successfully", data: presences}); 
+});
+
+router.get('/:id', verifyToken, async (req, res) => {
+    const presence = await Presence.findByPk(req.params.id,{
+        include: ['user']
+    });
+
+    res.json({success: "true", messages: "Data retrieved successfully", data: presence});
 });
 
 router.post('/clock-in', verifyToken, multerUpload.single('foto'), async (req, res) => {
