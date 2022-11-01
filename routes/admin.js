@@ -293,7 +293,7 @@ router.get('/users', verifyToken, async (req, res) => {
     res.json({success: "true", messages: "Data retrieved successfully", data: users})
 });
 
-router.post('/users', async (req, res) => {
+router.post('/users', verifyToken, async (req, res) => {
     const schema = {
         nama: 'string',
         email: 'string',
@@ -320,7 +320,7 @@ router.post('/users', async (req, res) => {
         company_id: admin.company_id
     });
 
-    res.json({success: "true", messages: "The account has been created", data: user});
+    res.json({success: "true", messages: "The account has been updated", data: user});
   });
 
 router.put('/users/:id', verifyToken, async (req, res) => {
