@@ -4,7 +4,7 @@ const Validator = require('fastest-validator');
 const multer = require('multer');
 const { verifyToken, checkUser } = require('../middleware/authJWT.js');
 
-const { Leave } = require('../models');
+const { Leave, User } = require('../models');
 const v = new Validator();
 
 const multerDiskStorage = multer.diskStorage({
@@ -32,17 +32,36 @@ router.get('/', verifyToken, async (req, res) => {
         where: {
             user_id: req.id
         },
-        include: ["user"]
+        include: {
+            model: User,
+            as: 'user',
+            attributes: {
+                exclude: ['password']
+            }
+        }
     });
 
     res.json({success: "true", messages: "Data retrieved successfully", data: leave}); 
 });
 
 router.get('/:id', verifyToken, async (req, res) => {
-    const id = req.params.id;
-    const leave = await Leave.findByPk(id, {
-        include: ["user"]
+    const leave = await Leave.findByPk(req.params.id, {
+        include: {
+            model: User,
+            as: 'user',
+            attributes: {
+                exclude: ['password']
+            }
+        }
     });
+
+    if(!leave){
+        return res.json({success: "false", messages: "Data Not Found"})
+    }
+
+    if(leave.user.id != req.id){
+        return res.json({success: "false", messages: "You Don't have access to other user data"})
+    }
 
     res.json({success: "true", messages: "Data retrieved successfully", data: leave || {}}); 
 });
@@ -57,7 +76,8 @@ router.post('/', verifyToken, multerUpload.single('surat_cuti'), async (req, res
         end_date: {
             type: "date",
             convert: true
-        }
+        },
+        deskripsi: 'string|optional'
     }
 
     const validate = v.validate(req.body, schema);
@@ -76,7 +96,8 @@ router.post('/', verifyToken, multerUpload.single('surat_cuti'), async (req, res
         tipe_cuti: req.body.tipe_cuti,
         start_date: req.body.start_date,
         end_date: req.body.end_date,
-        surat_cuti: surat_cuti.filename
+        surat_cuti: surat_cuti.filename,
+        deskripsi: req.body.deskripsi
     });
 
     res.json({success: "true", messages: "Your application for leave is success", data: leave}); 
