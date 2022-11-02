@@ -173,6 +173,28 @@ router.get('/leaves/history', verifyToken, async (req, res) => {
     res.json({success: "true", messages: "Data retrieved successfully", data: leaves});
 });
 
+router.get('/leaves/:id', verifyToken, async (req, res) => {
+    const user = await User.findByPk(req.id);
+    if(user.role != 'Admin'){
+        return res.json({success: "false", messages: "You Don't have access"})
+    }
+    const leave = await Leave.findByPk(req.params.id, {
+        include: {
+            model: User,
+            as: 'user',
+            attributes: {
+                exclude: ['password']
+            }
+        }
+    });
+
+    if(leave.user.company_id != user.company_id) {
+        return res.json({success: "false", messages: "You Don't have access to other company employee"})
+    }
+
+    res.json({success: "true", messages: "Data retrieved successfully", data: leave});
+});
+
 router.put('/leaves/:id', verifyToken, async (req, res) => {
     const schema = {
         status: 'string',
@@ -185,7 +207,25 @@ router.put('/leaves/:id', verifyToken, async (req, res) => {
         return res.status(400).json(validate);
     }
 
-    var leave = await Leave.findByPk(req.params.id);
+    const user = await User.findByPk(req.id);
+
+    var leave = await Leave.findByPk(req.params.id, {
+        include: {
+            model: User,
+            as: 'user',
+            attributes: {
+                exclude: ['password']
+            }
+        }
+    });
+
+    if(leave.user.id == user.id){
+        return res.json({success: "false", messages: "You Can't Approve/Decline Your Own Request"});
+    }
+
+    if(leave.user.company_id != user.company_id){
+        return res.json({success: "false", messages: "You Don't have access to other company employee"});
+    }
 
     leave = leave.update({
         status: req.body.status
@@ -245,6 +285,28 @@ router.get('/reimbursement/history', verifyToken, async (req, res) => {
     res.json({success: "true", messages: "Data retrieved successfully", data: reimbursements});
 });
 
+router.get('/reimbursement/:id', verifyToken, async (req, res) => {
+    const user = await User.findByPk(req.id);
+    if(user.role != 'Admin'){
+        return res.json({success: "false", messages: "You Don't have access"})
+    }
+    const reimbursement = await Reimbursement.findByPk(req.params.id, {
+        include: {
+            model: User,
+            as: 'user',
+            attributes: {
+                exclude: ['password']
+            }
+        }
+    });
+
+    if(reimbursement.user.company_id != user.company_id) {
+        return res.json({success: "false", messages: "You Don't have access to other company employee"})
+    }
+
+    res.json({success: "true", messages: "Data retrieved successfully", data: reimbursement});
+});
+
 router.put('/reimbursement/:id', verifyToken, multerUpload.single('bukti_reimburse'), async (req, res) => {
     const schema = {
         status: 'string',
@@ -257,7 +319,25 @@ router.put('/reimbursement/:id', verifyToken, multerUpload.single('bukti_reimbur
         return res.status(400).json(validate);
     }
 
-    var reimbursement = await Reimbursement.findByPk(req.params.id);
+    const user = await User.findByPk(req.id);
+
+    var reimbursement = await Reimbursement.findByPk(req.params.id, {
+        include: {
+            model: User,
+            as: 'user',
+            attributes: {
+                exclude: ['password']
+            }
+        }
+    });
+
+    if(reimbursement.user.id == user.id){
+        return res.json({success: "false", messages: "You Can't Approve/Decline Your Own Request"});
+    }
+
+    if(reimbursement.user.company_id != user.company_id){
+        return res.json({success: "false", messages: "You Don't have access to other company employee"});
+    }
 
     reimbursement = reimbursement.update({
         status: req.body.status
