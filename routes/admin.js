@@ -386,8 +386,8 @@ router.get('/users', verifyToken, async (req, res) => {
 
 router.post('/users', verifyToken, async (req, res) => {
     const schema = {
-        nama: 'string',
-        email: 'string',
+        nama: 'string|min:1',
+        email: 'email',
         position: 'string',
     }
 
