@@ -33,6 +33,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
           },
+          deskripsi: {
+            type: DataTypes.TEXT
+          },
           alasan_ditolak: {
             type: DataTypes.TEXT
           },

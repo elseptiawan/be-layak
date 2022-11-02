@@ -16,10 +16,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
           },
-          logo: {
+          template_surat_cuti: {
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: "default-logo.png"
+            defaultValue: "default-surat-cuti.pdf"
           },
           address: {
             type: DataTypes.STRING,
