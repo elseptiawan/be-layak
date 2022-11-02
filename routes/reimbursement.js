@@ -4,7 +4,7 @@ const Validator = require('fastest-validator');
 const multer = require('multer');
 const { verifyToken, checkUser } = require('../middleware/authJWT.js');
 
-const { Reimbursement } = require('../models');
+const { Reimbursement, User } = require('../models');
 const v = new Validator();
 
 const multerDiskStorage = multer.diskStorage({
@@ -32,17 +32,36 @@ router.get('/', verifyToken, async (req, res) => {
         where: {
             user_id: req.id
         },
-        include: ["user"]
+        include: {
+            model: User,
+            as: 'user',
+            attributes: {
+                exclude: ['password']
+            }
+        }
     });
 
     res.json({success: "true", messages: "Data retrieved successfully", data: reimbursement}); 
 });
 
 router.get('/:id', verifyToken, async (req, res) => {
-    const id = req.params.id;
-    const reimbursement = await Reimbursement.findByPk(id, {
-        include: ["user"]
+    const reimbursement = await Reimbursement.findByPk(req.params.id, {
+        include: {
+            model: User,
+            as: 'user',
+            attributes: {
+                exclude: ['password']
+            }
+        }
     });
+
+    if(!reimbursement){
+        return res.json({success: "false", messages: "Data Not Found"})
+    }
+
+    if(reimbursement.user.id != req.id){
+        return res.json({success: "false", messages: "You Don't have access to other user data"})
+    }
 
     res.json({success: "true", messages: "Data retrieved successfully", data: reimbursement || {}});
 });
