@@ -35,6 +35,9 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      deskripsi: {
+        type: Sequelize.TEXT
+      },
       alasan_ditolak: {
         type: Sequelize.TEXT
       },

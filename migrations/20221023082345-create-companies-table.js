@@ -18,10 +18,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      logo: {
+      template_surat_cuti: {
         type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: "default-logo.png"
+        defaultValue: "default-surat-cuti.pdf"
       },
       address: {
         type: Sequelize.STRING,
