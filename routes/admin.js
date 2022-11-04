@@ -188,6 +188,10 @@ router.get('/leaves/:id', verifyToken, async (req, res) => {
         }
     });
 
+    if(!leave){
+        return res.json({success: "false", messages: "Data Not Found"})
+    }
+
     if (leave.user.company_id != user.company_id) {
         return res.json({ success: "false", messages: "You Don't have access to other company employee" })
     }
@@ -299,6 +303,10 @@ router.get('/reimbursement/:id', verifyToken, async (req, res) => {
             }
         }
     });
+
+    if(!reimbursement){
+        return res.json({success: "false", messages: "Data Not Found"})
+    }
 
     if (reimbursement.user.company_id != user.company_id) {
         return res.json({ success: "false", messages: "You Don't have access to other company employee" })
