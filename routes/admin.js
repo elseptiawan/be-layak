@@ -133,6 +133,32 @@ router.get('/presences/yet', verifyToken, async (req, res) => {
     res.json({ success: "true", messages: "Data retrieved successfully", data: presences })
 });
 
+router.get('/presences/:id', verifyToken, async (req, res) => {
+    const user = await User.findByPk(req.id);
+    if (user.role != 'Admin') {
+        return res.json({ success: "false", messages: "You Don't have access" })
+    }
+    const presence = await Presence.findByPk(req.params.id, {
+        incude: {
+            model: User,
+            as: 'user',
+            attributes: {
+                exclude: ['password']
+            }
+        }
+    });
+
+    if(!presence){
+        return res.status(400).json({success: "false", messages: "Data Not Found"})
+    }
+
+    if (presence.user.company_id != user.company_id) {
+        return res.json({ success: "false", messages: "You Don't have access to other company employee" })
+    }
+
+    res.json({ success: "true", messages: "Data retrieved successfully", data: presence });
+});
+
 router.get('/leaves', verifyToken, async (req, res) => {
     const admin = await User.findByPk(req.id);
     const leaves = await Leave.findAll({
