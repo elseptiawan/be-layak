@@ -17,9 +17,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
           },
           template_surat_cuti: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            defaultValue: "default-surat-cuti.pdf"
+            type: DataTypes.STRING
           },
           address: {
             type: DataTypes.STRING,

@@ -19,9 +19,7 @@ module.exports = {
         allowNull: false
       },
       template_surat_cuti: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        defaultValue: "default-surat-cuti.pdf"
+        type: Sequelize.STRING
       },
       address: {
         type: Sequelize.STRING,
