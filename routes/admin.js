@@ -87,7 +87,7 @@ router.get('/presences/yet', verifyToken, async (req, res) => {
     });
 
     if (Object.keys(checkpresences).length === 0) {
-        const createpresence = user.forEach(async function (entry) {
+        user.forEach(async function (entry) {
             await Presence.create({
                 user_id: entry.id
             });
@@ -139,7 +139,7 @@ router.get('/presences/:id', verifyToken, async (req, res) => {
         return res.json({ success: "false", messages: "You Don't have access" })
     }
     const presence = await Presence.findByPk(req.params.id, {
-        incude: {
+        include: {
             model: User,
             as: 'user',
             attributes: {
