@@ -19,7 +19,7 @@ const multerDiskStorage = multer.diskStorage({
             extension = nameArr[nameArr.length - 1];
         }
 
-        cb(null, file.fieldname +'-'+ Date.now() +'-'+ extension);
+        cb(null, 'Storages/Reimbursements/' + file.fieldname +'-'+ Date.now() +'.'+ extension);
     }
 });
 

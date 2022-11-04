@@ -12,36 +12,36 @@ const v = new Validator();
 const { Op } = require("sequelize");
 
 const multerDiskStorage = multer.diskStorage({
-    destination: function(req, file, cb) {
+    destination: function (req, file, cb) {
         cb(null, 'Storages/Bukti-Reimburse');
     },
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
         const originalName = file.originalname;
         const nameArr = originalName.split('.');
         var extension = '';
-        if (nameArr.length > 1){
+        if (nameArr.length > 1) {
             extension = nameArr[nameArr.length - 1];
         }
 
-        cb(null, file.fieldname +'-'+ Date.now() +'-'+ extension);
+        cb(null, 'Storages/Bukti-Reimburse/' + file.fieldname + '-' + Date.now() + '.' + extension);
     }
 });
 
-const multerUpload = multer({storage: multerDiskStorage});
+const multerUpload = multer({ storage: multerDiskStorage });
 
 router.get('*', checkUser);
 router.post('*', checkUser);
 router.put('*', checkUser);
 router.get('/presences', verifyToken, async (req, res) => {
-    var nowDate = new Date(); 
-    var date = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate();
+    var nowDate = new Date();
+    var date = nowDate.getFullYear() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getDate();
     const admin = await User.findByPk(req.id);
     const presences = await Presence.findAll({
         where: {
             createdAt: {
                 [Op.lt]: new Date(),
                 [Op.gt]: date
-              },
+            },
             clock_in: {
                 [Op.ne]: null
             }
@@ -58,12 +58,12 @@ router.get('/presences', verifyToken, async (req, res) => {
         }
     })
 
-    res.json({success: "true", messages: "Data retrieved successfully", data: presences})
+    res.json({ success: "true", messages: "Data retrieved successfully", data: presences })
 });
 
 router.get('/presences/yet', verifyToken, async (req, res) => {
-    var nowDate = new Date(); 
-    var date = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate();
+    var nowDate = new Date();
+    var date = nowDate.getFullYear() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getDate();
     const admin = await User.findByPk(req.id);
     const checkpresences = await Presence.findAll({
         where: {
@@ -86,21 +86,21 @@ router.get('/presences/yet', verifyToken, async (req, res) => {
         }
     });
 
-    if (Object.keys(checkpresences).length === 0){
-        const createpresence = user.forEach(async function(entry) {
+    if (Object.keys(checkpresences).length === 0) {
+        const createpresence = user.forEach(async function (entry) {
             await Presence.create({
                 user_id: entry.id
             });
         });
     }
 
-    else{
+    else {
         var user_id = [];
-        checkpresences.forEach(function(en){
+        checkpresences.forEach(function (en) {
             user_id.push(en.user_id);
         });
-        user.forEach(async function(ent) {
-            if(user_id.includes(ent.id)) {
+        user.forEach(async function (ent) {
+            if (user_id.includes(ent.id)) {
                 return;
             }
             const createpresence = await Presence.create({
@@ -130,7 +130,7 @@ router.get('/presences/yet', verifyToken, async (req, res) => {
     // presences = { ...presences, ...getpresences };
     // // presences.push(...getpresences)
 
-    res.json({success: "true", messages: "Data retrieved successfully", data: presences})
+    res.json({ success: "true", messages: "Data retrieved successfully", data: presences })
 });
 
 router.get('/leaves', verifyToken, async (req, res) => {
@@ -149,7 +149,7 @@ router.get('/leaves', verifyToken, async (req, res) => {
         }
     });
 
-    res.json({success: "true", messages: "Data retrieved successfully", data: leaves});
+    res.json({ success: "true", messages: "Data retrieved successfully", data: leaves });
 });
 
 router.get('/leaves/history', verifyToken, async (req, res) => {
@@ -170,13 +170,13 @@ router.get('/leaves/history', verifyToken, async (req, res) => {
         }
     });
 
-    res.json({success: "true", messages: "Data retrieved successfully", data: leaves});
+    res.json({ success: "true", messages: "Data retrieved successfully", data: leaves });
 });
 
 router.get('/leaves/:id', verifyToken, async (req, res) => {
     const user = await User.findByPk(req.id);
-    if(user.role != 'Admin'){
-        return res.json({success: "false", messages: "You Don't have access"})
+    if (user.role != 'Admin') {
+        return res.json({ success: "false", messages: "You Don't have access" })
     }
     const leave = await Leave.findByPk(req.params.id, {
         include: {
@@ -188,11 +188,11 @@ router.get('/leaves/:id', verifyToken, async (req, res) => {
         }
     });
 
-    if(leave.user.company_id != user.company_id) {
-        return res.json({success: "false", messages: "You Don't have access to other company employee"})
+    if (leave.user.company_id != user.company_id) {
+        return res.json({ success: "false", messages: "You Don't have access to other company employee" })
     }
 
-    res.json({success: "true", messages: "Data retrieved successfully", data: leave});
+    res.json({ success: "true", messages: "Data retrieved successfully", data: leave });
 });
 
 router.put('/leaves/:id', verifyToken, async (req, res) => {
@@ -203,7 +203,7 @@ router.put('/leaves/:id', verifyToken, async (req, res) => {
 
     const validate = v.validate(req.body, schema);
 
-    if(validate.length){
+    if (validate.length) {
         return res.status(400).json(validate);
     }
 
@@ -219,30 +219,30 @@ router.put('/leaves/:id', verifyToken, async (req, res) => {
         }
     });
 
-    if(leave.user.id == user.id){
-        return res.json({success: "false", messages: "You Can't Approve/Decline Your Own Request"});
+    if (leave.user.id == user.id) {
+        return res.json({ success: "false", messages: "You Can't Approve/Decline Your Own Request" });
     }
 
-    if(leave.user.company_id != user.company_id){
-        return res.json({success: "false", messages: "You Don't have access to other company employee"});
+    if (leave.user.company_id != user.company_id) {
+        return res.json({ success: "false", messages: "You Don't have access to other company employee" });
     }
 
     leave = leave.update({
         status: req.body.status
     });
 
-    if(req.body.alasan_ditolak){
+    if (req.body.alasan_ditolak) {
         await Leave.update({
             alasan_ditolak: req.body.alasan_ditolak
         },
-        {
-            where:{
-                id: req.params.id
-            }
-        });
+            {
+                where: {
+                    id: req.params.id
+                }
+            });
     }
 
-    res.json({success: "true", messages: "leave application " + req.body.status});
+    res.json({ success: "true", messages: "leave application " + req.body.status });
 });
 
 router.get('/reimbursement', verifyToken, async (req, res) => {
@@ -261,7 +261,7 @@ router.get('/reimbursement', verifyToken, async (req, res) => {
         }
     });
 
-    res.json({success: "true", messages: "Data retrieved successfully", data: reimbursements});
+    res.json({ success: "true", messages: "Data retrieved successfully", data: reimbursements });
 });
 
 router.get('/reimbursement/history', verifyToken, async (req, res) => {
@@ -282,13 +282,13 @@ router.get('/reimbursement/history', verifyToken, async (req, res) => {
         }
     });
 
-    res.json({success: "true", messages: "Data retrieved successfully", data: reimbursements});
+    res.json({ success: "true", messages: "Data retrieved successfully", data: reimbursements });
 });
 
 router.get('/reimbursement/:id', verifyToken, async (req, res) => {
     const user = await User.findByPk(req.id);
-    if(user.role != 'Admin'){
-        return res.json({success: "false", messages: "You Don't have access"})
+    if (user.role != 'Admin') {
+        return res.json({ success: "false", messages: "You Don't have access" })
     }
     const reimbursement = await Reimbursement.findByPk(req.params.id, {
         include: {
@@ -300,11 +300,11 @@ router.get('/reimbursement/:id', verifyToken, async (req, res) => {
         }
     });
 
-    if(reimbursement.user.company_id != user.company_id) {
-        return res.json({success: "false", messages: "You Don't have access to other company employee"})
+    if (reimbursement.user.company_id != user.company_id) {
+        return res.json({ success: "false", messages: "You Don't have access to other company employee" })
     }
 
-    res.json({success: "true", messages: "Data retrieved successfully", data: reimbursement});
+    res.json({ success: "true", messages: "Data retrieved successfully", data: reimbursement });
 });
 
 router.put('/reimbursement/:id', verifyToken, multerUpload.single('bukti_reimburse'), async (req, res) => {
@@ -315,7 +315,7 @@ router.put('/reimbursement/:id', verifyToken, multerUpload.single('bukti_reimbur
 
     const validate = v.validate(req.body, schema);
 
-    if(validate.length){
+    if (validate.length) {
         return res.status(400).json(validate);
     }
 
@@ -331,12 +331,12 @@ router.put('/reimbursement/:id', verifyToken, multerUpload.single('bukti_reimbur
         }
     });
 
-    if(reimbursement.user.id == user.id){
-        return res.json({success: "false", messages: "You Can't Approve/Decline Your Own Request"});
+    if (reimbursement.user.id == user.id) {
+        return res.json({ success: "false", messages: "You Can't Approve/Decline Your Own Request" });
     }
 
-    if(reimbursement.user.company_id != user.company_id){
-        return res.json({success: "false", messages: "You Don't have access to other company employee"});
+    if (reimbursement.user.company_id != user.company_id) {
+        return res.json({ success: "false", messages: "You Don't have access to other company employee" });
     }
 
     reimbursement = reimbursement.update({
@@ -344,10 +344,10 @@ router.put('/reimbursement/:id', verifyToken, multerUpload.single('bukti_reimbur
     });
 
     const bukti_reimburse = req.file;
-    if(bukti_reimburse){
+    if (bukti_reimburse) {
         await Reimbursement.update({
             bukti_reimburse: bukti_reimburse.filename
-        },{
+        }, {
             where: {
                 id: req.params.id
             }
@@ -355,10 +355,10 @@ router.put('/reimbursement/:id', verifyToken, multerUpload.single('bukti_reimbur
         );
     }
 
-    if(req.body.alasan_ditolak){
+    if (req.body.alasan_ditolak) {
         await Reimbursement.update({
             alasan_ditolak: req.body.alasan_ditolak
-        },{
+        }, {
             where: {
                 id: req.params.id
             }
@@ -366,7 +366,7 @@ router.put('/reimbursement/:id', verifyToken, multerUpload.single('bukti_reimbur
         );
     }
 
-    res.json({success: "true", messages: "leave application " + req.body.status});
+    res.json({ success: "true", messages: "leave application " + req.body.status });
 });
 
 router.get('/users', verifyToken, async (req, res) => {
@@ -381,7 +381,7 @@ router.get('/users', verifyToken, async (req, res) => {
         }
     });
 
-    res.json({success: "true", messages: "Data retrieved successfully", data: users})
+    res.json({ success: "true", messages: "Data retrieved successfully", data: users })
 });
 
 router.post('/users', verifyToken, async (req, res) => {
@@ -393,13 +393,13 @@ router.post('/users', verifyToken, async (req, res) => {
 
     const validate = v.validate(req.body, schema);
 
-    if(validate.length){
+    if (validate.length) {
         return res.status(400).json(validate);
     }
 
     const admin = await User.findByPk(req.id);
 
-    const company = await Company.findOne({id: admin.company_id});
+    const company = await Company.findOne({ id: admin.company_id });
 
     const user = await User.create({
         nama: req.body.nama,
@@ -411,8 +411,8 @@ router.post('/users', verifyToken, async (req, res) => {
         company_id: admin.company_id
     });
 
-    res.json({success: "true", messages: "The account has been updated", data: user});
-  });
+    res.json({ success: "true", messages: "The account has been updated", data: user });
+});
 
 router.put('/users/:id', verifyToken, async (req, res) => {
     const schema = {
@@ -424,7 +424,7 @@ router.put('/users/:id', verifyToken, async (req, res) => {
 
     const validate = v.validate(req.body, schema);
 
-    if(validate.length){
+    if (validate.length) {
         return res.status(400).json(validate);
     }
 
@@ -437,8 +437,8 @@ router.put('/users/:id', verifyToken, async (req, res) => {
         sisa_cuti: req.body.sisa_cuti
     });
 
-    res.json({success: "true", messages: "The account has been created"});
-  });
+    res.json({ success: "true", messages: "The account has been created" });
+});
 
 router.delete('/users/:id', verifyToken, async (req, res) => {
     await User.destroy({
@@ -447,7 +447,7 @@ router.delete('/users/:id', verifyToken, async (req, res) => {
         }
     })
 
-    res.json({success: "true", messages: "The account has been deleted"})
+    res.json({ success: "true", messages: "The account has been deleted" })
 });
 
 module.exports = router;
