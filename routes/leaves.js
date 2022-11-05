@@ -44,6 +44,14 @@ router.get('/', verifyToken, async (req, res) => {
     res.json({success: "true", messages: "Data retrieved successfully", data: leave}); 
 });
 
+router.get('/download-template-surat-cuti', verifyToken, async (req, res) => {
+    const user = await User.findByPk(req.id, {
+        include: ['company']
+    });
+
+    res.json({success: "true", data: user});
+})
+
 router.get('/:id', verifyToken, async (req, res) => {
     const leave = await Leave.findByPk(req.params.id, {
         include: {
