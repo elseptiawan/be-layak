@@ -16,6 +16,7 @@ var reimbursementRouter = require('./routes/reimbursement');
 var loginRouter = require('./routes/login');
 var presencesRouter = require('./routes/presences');
 var profilesRouter = require('./routes/profiles');
+var superAdminRouter = require('./routes/superAdmin');
 var tempRouter = require('./routes/temp');
 
 var app = express();
@@ -39,6 +40,7 @@ app.use('/auth', loginRouter);
 app.use('/presences', presencesRouter);
 app.use('/profiles', profilesRouter);
 app.use('/temp', tempRouter);
+app.use('/super-admin', superAdminRouter);
 
 app.use(function(req, res, next) {
     next(createError(404));

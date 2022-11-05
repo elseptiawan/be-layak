@@ -8,7 +8,7 @@ const { User, Company } = require('../models');
 
 const v = new Validator();
 
-router.post('/createAdmin', async (req, res) => {
+router.post('/createSuperAdmin', async (req, res) => {
     const schema = {
         nama: 'string',
         email: 'string',
@@ -29,7 +29,7 @@ router.post('/createAdmin', async (req, res) => {
         email: req.body.email,
         password: bcrypt.hashSync('defaultpassword', salt),
         position: req.body.position,
-        role: "Admin",
+        role: "Super Admin",
         sisa_cuti: company.jatah_cuti,
         company_id: req.body.company_id
     });
