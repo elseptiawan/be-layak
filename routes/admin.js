@@ -27,7 +27,24 @@ const multerDiskStorage = multer.diskStorage({
     }
 });
 
+const multerDiskStorageLeave = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'Storages/Template-Surat-Cuti');
+    },
+    filename: function (req, file, cb) {
+        const originalName = file.originalname;
+        const nameArr = originalName.split('.');
+        var extension = '';
+        if (nameArr.length > 1) {
+            extension = nameArr[nameArr.length - 1];
+        }
+
+        cb(null, file.fieldname + '-' + Date.now() + '.' + extension);
+    }
+});
+
 const multerUpload = multer({ storage: multerDiskStorage });
+const multerUploadLeave = multer({ storage: multerDiskStorageLeave });
 
 router.get('*', checkUser);
 router.post('*', checkUser);
@@ -252,7 +269,7 @@ router.get('/leaves/:id', verifyToken, async (req, res) => {
     res.json({ success: "true", messages: "Data retrieved successfully", data: leave });
 });
 
-router.put('/leaves/upload-template-surat-cuti', verifyToken, multerUpload.single('template_surat_cuti'), async (req, res) => {
+router.put('/leaves/upload-template-surat-cuti', verifyToken, multerUploadLeave.single('template_surat_cuti'), async (req, res) => {
     const user = await User.findByPk(req.id);
 
     if(user.role != 'Admin'){
@@ -264,16 +281,14 @@ router.put('/leaves/upload-template-surat-cuti', verifyToken, multerUpload.singl
         return res.status(400).json({success: "false", messages: "Template Surat Cuti cannot be empty"});
     }
 
-    return res.json(template_surat_cuti);
-
-    const company = await Company.findOne({
+    var company = await Company.findOne({
         where: {
             id: user.company_id
         }
     });
 
     company = company.update({
-        template_surat_cuti: template_surat_cuti.filename
+        template_surat_cuti: template_surat_cuti.destination + '/' + template_surat_cuti.filename
     });
 
     res.json ({success: "true", message: "Template Surat Cuti Has Been Uploaded"});
