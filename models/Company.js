@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
           template_surat_cuti: {
             type: DataTypes.STRING
           },
-          address: {
+          alamat: {
             type: DataTypes.STRING,
             allowNull: false
           },

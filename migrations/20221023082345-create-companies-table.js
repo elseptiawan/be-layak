@@ -21,7 +21,7 @@ module.exports = {
       template_surat_cuti: {
         type: Sequelize.STRING
       },
-      address: {
+      alamat: {
         type: Sequelize.STRING,
         allowNull: false
       },
