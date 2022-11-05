@@ -21,7 +21,7 @@ const multerDiskStorage = multer.diskStorage({
             extension = nameArr[nameArr.length - 1];
         }
 
-        cb(null, 'Storages/Presences/' + file.fieldname +'-'+ Date.now() +'.'+ extension);
+        cb(null, file.fieldname +'-'+ Date.now() +'.'+ extension);
     }
 });
 
@@ -75,7 +75,7 @@ router.post('/clock-in', verifyToken, multerUpload.single('foto'), async (req, r
 
     const presence = await Presence.update({
         clock_in: time,
-        foto: foto.filename
+        foto: foto.destination + '/' + foto.filename
     },
     {
         where: {

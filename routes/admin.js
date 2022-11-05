@@ -23,7 +23,7 @@ const multerDiskStorage = multer.diskStorage({
             extension = nameArr[nameArr.length - 1];
         }
 
-        cb(null, 'Storages/Bukti-Reimburse/' + file.fieldname + '-' + Date.now() + '.' + extension);
+        cb(null, file.fieldname + '-' + Date.now() + '.' + extension);
     }
 });
 
@@ -35,7 +35,12 @@ router.put('*', checkUser);
 router.get('/presences', verifyToken, async (req, res) => {
     var nowDate = new Date();
     var date = nowDate.getFullYear() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getDate();
-    const admin = await User.findByPk(req.id);
+    const user = await User.findByPk(req.id);
+
+    if (user.role != 'Admin'){
+        return res.json({success: "false", message: "You Don't Have Access"});
+    }
+    
     const presences = await Presence.findAll({
         where: {
             createdAt: {
@@ -53,7 +58,7 @@ router.get('/presences', verifyToken, async (req, res) => {
                 exclude: ['password']
             },
             where: {
-                company_id: admin.company_id
+                company_id: user.company_id
             }
         }
     })
@@ -65,6 +70,11 @@ router.get('/presences/yet', verifyToken, async (req, res) => {
     var nowDate = new Date();
     var date = nowDate.getFullYear() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getDate();
     const admin = await User.findByPk(req.id);
+
+    if (admin.role != 'Admin'){
+        return res.json({success: "false", message: "You Don't Have Access"});
+    }
+
     const checkpresences = await Presence.findAll({
         where: {
             createdAt: {
@@ -135,6 +145,11 @@ router.get('/presences/yet', verifyToken, async (req, res) => {
 
 router.get('/presences/:id', verifyToken, async (req, res) => {
     const user = await User.findByPk(req.id);
+
+    if(user.role != 'Admin'){
+        return res.json({success: "false", message: "You Don't Have Access"});
+    }
+
     if (user.role != 'Admin') {
         return res.json({ success: "false", messages: "You Don't have access" })
     }
@@ -160,10 +175,15 @@ router.get('/presences/:id', verifyToken, async (req, res) => {
 });
 
 router.get('/leaves', verifyToken, async (req, res) => {
-    const admin = await User.findByPk(req.id);
+    const user = await User.findByPk(req.id);
+
+    if(user.role != 'Admin'){
+        return res.json({success: "false", message: "You Don't Have Access"});
+    }
+
     const leaves = await Leave.findAll({
         where: {
-            '$user.company_id$': admin.company_id,
+            '$user.company_id$': user.company_id,
             status: 'Pending'
         },
         include: {
@@ -179,10 +199,15 @@ router.get('/leaves', verifyToken, async (req, res) => {
 });
 
 router.get('/leaves/history', verifyToken, async (req, res) => {
-    const admin = await User.findByPk(req.id);
+    const user = await User.findByPk(req.id);
+
+    if(user.role != 'Admin'){
+        return res.json({success: "false", message: "You Don't Have Access"});
+    }
+
     const leaves = await Leave.findAll({
         where: {
-            '$user.company_id$': admin.company_id,
+            '$user.company_id$': user.company_id,
             status: {
                 [Op.or]: ['Approved', 'Declined']
             }
@@ -201,9 +226,11 @@ router.get('/leaves/history', verifyToken, async (req, res) => {
 
 router.get('/leaves/:id', verifyToken, async (req, res) => {
     const user = await User.findByPk(req.id);
+
     if (user.role != 'Admin') {
         return res.json({ success: "false", messages: "You Don't have access" })
     }
+
     const leave = await Leave.findByPk(req.params.id, {
         include: {
             model: User,
@@ -225,6 +252,33 @@ router.get('/leaves/:id', verifyToken, async (req, res) => {
     res.json({ success: "true", messages: "Data retrieved successfully", data: leave });
 });
 
+router.put('/leaves/upload-template-surat-cuti', verifyToken, multerUpload.single('template_surat_cuti'), async (req, res) => {
+    const user = await User.findByPk(req.id);
+
+    if(user.role != 'Admin'){
+        return res.json({success: "false", message: "You Don't Have Access"});
+    }
+
+    const template_surat_cuti = req.file;
+    if(!template_surat_cuti){
+        return res.status(400).json({success: "false", messages: "Template Surat Cuti cannot be empty"});
+    }
+
+    return res.json(template_surat_cuti);
+
+    const company = await Company.findOne({
+        where: {
+            id: user.company_id
+        }
+    });
+
+    company = company.update({
+        template_surat_cuti: template_surat_cuti.filename
+    });
+
+    res.json ({success: "true", message: "Template Surat Cuti Has Been Uploaded"});
+});
+
 router.put('/leaves/:id', verifyToken, async (req, res) => {
     const schema = {
         status: 'string',
@@ -238,6 +292,10 @@ router.put('/leaves/:id', verifyToken, async (req, res) => {
     }
 
     const user = await User.findByPk(req.id);
+
+    if(user.role != 'Admin'){
+        return res.json({success: "false", message: "You Don't Have Access"});
+    }
 
     var leave = await Leave.findByPk(req.params.id, {
         include: {
@@ -276,10 +334,15 @@ router.put('/leaves/:id', verifyToken, async (req, res) => {
 });
 
 router.get('/reimbursement', verifyToken, async (req, res) => {
-    const admin = await User.findByPk(req.id);
+    const user = await User.findByPk(req.id);
+
+    if(user.role != 'Admin'){
+        return res.json({success: "false", message: "You Don't Have Access"});
+    }
+
     const reimbursements = await Reimbursement.findAll({
         where: {
-            '$user.company_id$': admin.company_id,
+            '$user.company_id$': user.company_id,
             status: 'Pending'
         },
         include: {
@@ -295,10 +358,15 @@ router.get('/reimbursement', verifyToken, async (req, res) => {
 });
 
 router.get('/reimbursement/history', verifyToken, async (req, res) => {
-    const admin = await User.findByPk(req.id);
+    const user = await User.findByPk(req.id);
+
+    if(user.role != 'Admin'){
+        return res.json({success: "false", message: "You Don't Have Access"});
+    }
+
     const reimbursements = await Reimbursement.findAll({
         where: {
-            '$user.company_id$': admin.company_id,
+            '$user.company_id$': user.company_id,
             status: {
                 [Op.or]: ['Approved', 'Declined']
             }
@@ -317,9 +385,11 @@ router.get('/reimbursement/history', verifyToken, async (req, res) => {
 
 router.get('/reimbursement/:id', verifyToken, async (req, res) => {
     const user = await User.findByPk(req.id);
+
     if (user.role != 'Admin') {
         return res.json({ success: "false", messages: "You Don't have access" })
     }
+
     const reimbursement = await Reimbursement.findByPk(req.params.id, {
         include: {
             model: User,
@@ -355,6 +425,10 @@ router.put('/reimbursement/:id', verifyToken, multerUpload.single('bukti_reimbur
 
     const user = await User.findByPk(req.id);
 
+    if(user.role != 'Admin'){
+        return res.json({success: "false", message: "You Don't Have Access"});
+    }
+
     var reimbursement = await Reimbursement.findByPk(req.params.id, {
         include: {
             model: User,
@@ -380,7 +454,7 @@ router.put('/reimbursement/:id', verifyToken, multerUpload.single('bukti_reimbur
     const bukti_reimburse = req.file;
     if (bukti_reimburse) {
         await Reimbursement.update({
-            bukti_reimburse: bukti_reimburse.filename
+            bukti_reimburse: bukti_reimburse.destination + '/' + bukti_reimburse.filename
         }, {
             where: {
                 id: req.params.id
@@ -400,14 +474,19 @@ router.put('/reimbursement/:id', verifyToken, multerUpload.single('bukti_reimbur
         );
     }
 
-    res.json({ success: "true", messages: "leave application " + req.body.status });
+    res.json({ success: "true", messages: "Reimburse application " + req.body.status });
 });
 
 router.get('/users', verifyToken, async (req, res) => {
-    const admin = await User.findByPk(req.id);
+    const user = await User.findByPk(req.id);
+
+    if(user.role != 'Admin'){
+        return res.json({success: "false", message: "You Don't Have Access"});
+    }
+
     const users = await User.findAll({
         where: {
-            company_id: admin.company_id,
+            company_id: user.company_id,
             role: 'User'
         },
         attributes: {
@@ -433,6 +512,10 @@ router.post('/users', verifyToken, async (req, res) => {
 
     const admin = await User.findByPk(req.id);
 
+    if(admin.role != 'Admin'){
+        return res.json({success: "false", message: "You Don't Have Access"});
+    }
+
     const company = await Company.findOne({ id: admin.company_id });
 
     const user = await User.create({
@@ -449,6 +532,12 @@ router.post('/users', verifyToken, async (req, res) => {
 });
 
 router.put('/users/:id', verifyToken, async (req, res) => {
+    const admin = await User.findByPk(req.id);
+
+    if(admin.role != 'Admin'){
+        return res.json({success: "false", message: "You Don't Have Access"});
+    }
+
     const schema = {
         nama: 'string',
         email: 'string',
@@ -475,6 +564,12 @@ router.put('/users/:id', verifyToken, async (req, res) => {
 });
 
 router.delete('/users/:id', verifyToken, async (req, res) => {
+    const user = await User.findByPk(req.id);
+
+    if(user.role != 'Admin'){
+        return res.json({success: "false", message: "You Don't Have Access"});
+    }
+
     await User.destroy({
         where: {
             id: req.params.id

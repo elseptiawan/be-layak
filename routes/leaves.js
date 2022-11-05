@@ -19,7 +19,7 @@ const multerDiskStorage = multer.diskStorage({
             extension = nameArr[nameArr.length - 1];
         }
 
-        cb(null, 'Storages/Leaves/' + file.fieldname +'-'+ Date.now() +'.'+ extension);
+        cb(null, file.fieldname +'-'+ Date.now() +'.'+ extension);
     }
 });
 
@@ -96,7 +96,7 @@ router.post('/', verifyToken, multerUpload.single('surat_cuti'), async (req, res
         tipe_cuti: req.body.tipe_cuti,
         start_date: req.body.start_date,
         end_date: req.body.end_date,
-        surat_cuti: surat_cuti.filename,
+        surat_cuti: surat_cuti.destination + '/' +surat_cuti.filename,
         deskripsi: req.body.deskripsi
     });
 
