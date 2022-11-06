@@ -35,11 +35,11 @@ router.post('/companies', verifyToken, async (req, res) => {
     }
 
     const schema = {
-        nama: 'string',
-        email: 'string',
-        alamat: 'string',
+        nama: 'string|min:1',
+        email: 'email',
+        alamat: 'string|min:1',
         web: 'string|optional',
-        no_hp: 'string',
+        no_hp: 'string|min:1',
         jatah_cuti: 'number'
     }
 
@@ -69,11 +69,11 @@ router.put('/companies/:id', verifyToken, async (req, res) => {
     }
 
     const schema = {
-        nama: 'string',
-        email: 'string',
-        alamat: 'string',
+        nama: 'string|min:1',
+        email: 'email',
+        alamat: 'string|min:1',
         web: 'string|optional',
-        no_hp: 'string',
+        no_hp: 'string|min:1',
         jatah_cuti: 'number'
     }
 
