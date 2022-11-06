@@ -136,25 +136,27 @@ router.get('/admin', verifyToken, async (req, res) => {
         return res.status(400).json({success: "false", message: "You Don't Have Access"});
     }
 
-    var options = new Object();
+    var options = {
+        role: 'Admin'
+    };
 
     if (req.query.search){
         options = {
-                [Op. or] : {
-                    nama : {
+            [Op. and] : {
+                role: 'Admin',
+                [Op.or] : {
+                    nama: {
                         [Op. like] : '%' + req.query.search + '%'
                     },
-                    position : {
+                    position: {
                         [Op. like] : '%' + req.query.search + '%'
                     }
                 }
+            }
         }
     }
 
     const admin = await User.findAll({
-        where: {
-            role: 'Admin'
-        },
         where : options,
         attributes : {
             exclude: ['password']
