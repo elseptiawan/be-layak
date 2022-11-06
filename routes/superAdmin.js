@@ -22,7 +22,19 @@ router.get('/companies', verifyToken, async (req, res) => {
         return res.status(400).json({success: "false", message: "You Don't Have Access"});
     }
 
-    const companies = await Company.findAll();
+    var option = new Object();
+
+    if (req.query.search){
+        option = {
+            where : {
+                nama : {
+                    [Op. like] : '%' + req.query.search + '%'
+                }
+            }
+        }
+    }
+
+    var companies = await Company.findAll(option);
 
     res.json({success: "true", message: "Data retrieved successfully", data: companies})
 });
@@ -124,10 +136,26 @@ router.get('/admin', verifyToken, async (req, res) => {
         return res.status(400).json({success: "false", message: "You Don't Have Access"});
     }
 
+    var options = new Object();
+
+    if (req.query.search){
+        options = {
+                [Op. or] : {
+                    nama : {
+                        [Op. like] : '%' + req.query.search + '%'
+                    },
+                    position : {
+                        [Op. like] : '%' + req.query.search + '%'
+                    }
+                }
+        }
+    }
+
     const admin = await User.findAll({
         where: {
             role: 'Admin'
         },
+        where : options,
         attributes : {
             exclude: ['password']
         },
