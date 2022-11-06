@@ -198,11 +198,28 @@ router.get('/leaves', verifyToken, async (req, res) => {
         return res.json({success: "false", message: "You Don't Have Access"});
     }
 
-    const leaves = await Leave.findAll({
-        where: {
+    var options = {
+        '$user.company_id$': user.company_id,
+        status: 'Pending'
+    };
+
+    if (req.query.search){
+        options = {
             '$user.company_id$': user.company_id,
-            status: 'Pending'
-        },
+            status: 'Pending',
+            [Op.or] : {
+                '$user.nama$' : {
+                    [Op. like] : '%' + req.query.search + '%'
+                },
+                '$user.position$': {
+                    [Op. like] : '%' + req.query.search + '%'
+                }
+            }
+        }
+    }
+
+    const leaves = await Leave.findAll({
+        where : options,
         include: {
             model: User,
             as: 'user',
@@ -222,13 +239,55 @@ router.get('/leaves/history', verifyToken, async (req, res) => {
         return res.json({success: "false", message: "You Don't Have Access"});
     }
 
-    const leaves = await Leave.findAll({
-        where: {
-            '$user.company_id$': user.company_id,
-            status: {
-                [Op.or]: ['Approved', 'Declined']
+    var options = {
+        '$user.company_id$': user.company_id,
+        status: {
+            [Op.or]: ['Approved', 'Declined']
+        }
+    };
+
+    if (req.query.search){
+        if(req.query.status){
+            options = {
+                '$user.company_id$': user.company_id,
+                status: req.query.status,
+                [Op.or] : {
+                    '$user.nama$' : {
+                        [Op. like] : '%' + req.query.search + '%'
+                    },
+                    '$user.position$': {
+                        [Op. like] : '%' + req.query.search + '%'
+                    }
+                }
             }
-        },
+        }
+        else {
+            options = {
+                '$user.company_id$': user.company_id,
+                status: {
+                    [Op.or]: ['Approved', 'Declined']
+                },
+                [Op.or] : {
+                    '$user.nama$' : {
+                        [Op. like] : '%' + req.query.search + '%'
+                    },
+                    '$user.position$': {
+                        [Op. like] : '%' + req.query.search + '%'
+                    }
+                }
+            }
+        }
+    }
+
+    else if (req.query.status){
+        options = {
+            '$user.company_id$': user.company_id,
+            status: req.query.status
+        }
+    }
+
+    const leaves = await Leave.findAll({
+        where: options,
         include: {
             model: User,
             as: 'user',
@@ -355,11 +414,28 @@ router.get('/reimbursement', verifyToken, async (req, res) => {
         return res.json({success: "false", message: "You Don't Have Access"});
     }
 
-    const reimbursements = await Reimbursement.findAll({
-        where: {
+    var options = {
+        '$user.company_id$': user.company_id,
+        status: 'Pending'
+    };
+
+    if (req.query.search){
+        options = {
             '$user.company_id$': user.company_id,
-            status: 'Pending'
-        },
+            status: 'Pending',
+            [Op.or] : {
+                '$user.nama$' : {
+                    [Op. like] : '%' + req.query.search + '%'
+                },
+                '$user.position$': {
+                    [Op. like] : '%' + req.query.search + '%'
+                }
+            }
+        }
+    }
+
+    const reimbursements = await Reimbursement.findAll({
+        where: options,
         include: {
             model: User,
             as: 'user',
@@ -379,13 +455,55 @@ router.get('/reimbursement/history', verifyToken, async (req, res) => {
         return res.json({success: "false", message: "You Don't Have Access"});
     }
 
-    const reimbursements = await Reimbursement.findAll({
-        where: {
-            '$user.company_id$': user.company_id,
-            status: {
-                [Op.or]: ['Approved', 'Declined']
+    var options = {
+        '$user.company_id$': user.company_id,
+        status: {
+            [Op.or] : ['Approved', 'Declined']
+        }
+    };
+
+    if (req.query.search){
+        if(req.query.status){
+            options = {
+                '$user.company_id$': user.company_id,
+                status: req.query.status,
+                [Op.or] : {
+                    '$user.nama$' : {
+                        [Op. like] : '%' + req.query.search + '%'
+                    },
+                    '$user.position$': {
+                        [Op. like] : '%' + req.query.search + '%'
+                    }
+                }
+            } 
+        }
+        else{
+            options = {
+                '$user.company_id$': user.company_id,
+                status: {
+                    [Op.or] : ['Approved', 'Declined']
+                },
+                [Op.or] : {
+                    '$user.nama$' : {
+                        [Op. like] : '%' + req.query.search + '%'
+                    },
+                    '$user.position$': {
+                        [Op. like] : '%' + req.query.search + '%'
+                    }
+                }
             }
-        },
+        }
+    }
+
+    else if(req.query.status){
+        options = {
+            '$user.company_id$': user.company_id,
+            status: req.query.status
+        }
+    }
+
+    const reimbursements = await Reimbursement.findAll({
+        where: options,
         include: {
             model: User,
             as: 'user',
@@ -499,11 +617,28 @@ router.get('/users', verifyToken, async (req, res) => {
         return res.json({success: "false", message: "You Don't Have Access"});
     }
 
-    const users = await User.findAll({
-        where: {
+    var options = {
+        company_id: user.company_id,
+        role: 'User'
+    };
+
+    if (req.query.search){
+        options = {
             company_id: user.company_id,
-            role: 'User'
-        },
+            role: 'User',
+            [Op.or] : {
+                nama: {
+                    [Op. like] : '%' + req.query.search + '%'
+                },
+                position: {
+                    [Op. like] : '%' + req.query.search + '%'
+                }
+            }
+        }
+    }
+
+    const users = await User.findAll({
+        where: options,
         attributes: {
             exclude: ['password']
         }
