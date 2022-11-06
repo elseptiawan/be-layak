@@ -31,8 +31,8 @@ router.put('*', checkUser);
 router.put('/edit-password', verifyToken, async (req, res) => {
     const schema = {
         password: 'string',
-        new_password: 'string',
-        confirm_new_password: 'string'
+        new_password: 'string|min:6',
+        confirm_new_password: 'string|min:6'
     }
 
     const validate = v.validate(req.body, schema);

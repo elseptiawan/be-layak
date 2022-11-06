@@ -139,9 +139,9 @@ router.get('/admin', verifyToken, async (req, res) => {
 
 router.post('/admin', verifyToken, async (req, res) => {
     const schema = {
-        nama: 'string',
-        email: 'string',
-        position: 'string',
+        nama: 'string|min:1',
+        email: 'string|min:1',
+        position: 'string|min:1',
         company_id: 'number'
     }
 
@@ -169,9 +169,9 @@ router.post('/admin', verifyToken, async (req, res) => {
 
 router.put('/admin/:id', verifyToken, async (req, res) => {
     const schema = {
-        nama: 'string',
-        email: 'string',
-        position: 'string'
+        nama: 'string|min:1',
+        email: 'string|min:1',
+        position: 'string|min:1'
     }
 
     const validate = v.validate(req.body, schema);

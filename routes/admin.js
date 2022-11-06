@@ -296,7 +296,7 @@ router.put('/leaves/upload-template-surat-cuti', verifyToken, multerUploadLeave.
 
 router.put('/leaves/:id', verifyToken, async (req, res) => {
     const schema = {
-        status: 'string',
+        status: 'string|min:1',
         alasan_ditolak: 'string|optional'
     }
 
@@ -428,7 +428,7 @@ router.get('/reimbursement/:id', verifyToken, async (req, res) => {
 
 router.put('/reimbursement/:id', verifyToken, multerUpload.single('bukti_reimburse'), async (req, res) => {
     const schema = {
-        status: 'string',
+        status: 'string|min:1',
         alasan_ditolak: 'string|optional'
     }
 
@@ -516,7 +516,7 @@ router.post('/users', verifyToken, async (req, res) => {
     const schema = {
         nama: 'string|min:1',
         email: 'email',
-        position: 'string',
+        position: 'string|min:1',
     }
 
     const validate = v.validate(req.body, schema);
@@ -554,10 +554,10 @@ router.put('/users/:id', verifyToken, async (req, res) => {
     }
 
     const schema = {
-        nama: 'string',
-        email: 'string',
-        position: 'string',
-        sisa_cuti: 'number'
+        nama: 'string|min:1',
+        email: 'email',
+        position: 'string|min:1',
+        sisa_cuti: 'number|min:1'
     }
 
     const validate = v.validate(req.body, schema);

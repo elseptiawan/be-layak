@@ -68,12 +68,12 @@ router.get('/:id', verifyToken, async (req, res) => {
 
 router.post('/', verifyToken, multerUpload.single('bukti_pembayaran'), async (req, res) => {
     const schema = {
-        jumlah_uang: 'string',
+        jumlah_uang: 'string|min:1',
         tanggal_pembayaran: {
             type: "date",
             convert: true
         },
-        kebutuhan: 'string'
+        kebutuhan: 'string|min:1'
     }
 
     const validate = v.validate(req.body, schema);
