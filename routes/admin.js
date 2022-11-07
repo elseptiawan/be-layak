@@ -59,17 +59,39 @@ router.get('/presences', verifyToken, async (req, res) => {
     if (user.role != 'Admin'){
         return res.json({success: "false", message: "You Don't Have Access"});
     }
-    
-    const presences = await Presence.findAll({
-        where: {
+
+    var options = {
+        createdAt: {
+            [Op.lt]: new Date(),
+            [Op.gt]: date
+        },
+        clock_in: {
+            [Op.ne]: null
+        }
+    }
+
+    if (req.query.search){
+        options = {
             createdAt: {
                 [Op.lt]: new Date(),
                 [Op.gt]: date
             },
             clock_in: {
                 [Op.ne]: null
+            },
+            [Op.or] : {
+                '$user.nama$': {
+                    [Op.like] : '%' + req.query.search + '%'
+                },
+                '$user.position$' : {
+                    [Op.like] : '%' + req.query.search + '%'
+                }
             }
-        },
+        }
+    }
+    
+    const presences = await Presence.findAll({
+        where: options,
         include: {
             model: User,
             as: 'user',
@@ -138,15 +160,36 @@ router.get('/presences/yet', verifyToken, async (req, res) => {
         });
     }
 
-    const presences = await Presence.findAll({
-        where: {
+    var options = {
+        createdAt: {
+            [Op.lt]: new Date(),
+            [Op.gt]: date
+        },
+        '$user.company_id$': admin.company_id,
+        clock_in: null
+    }
+
+    if (req.query.search){
+        options = {
             createdAt: {
                 [Op.lt]: new Date(),
                 [Op.gt]: date
             },
             '$user.company_id$': admin.company_id,
-            clock_in: null
-        },
+            clock_in: null,
+            [Op.or] : {
+                '$user.nama$': {
+                    [Op.like] : '%' + req.query.search + '%'
+                },
+                '$user.position$' : {
+                    [Op.like] : '%' + req.query.search + '%'
+                }
+            }
+        }
+    }
+
+    const presences = await Presence.findAll({
+        where: options,
         include: {
             model: User,
             as: 'user',
