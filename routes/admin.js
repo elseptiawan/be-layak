@@ -49,6 +49,8 @@ const multerUploadLeave = multer({ storage: multerDiskStorageLeave });
 router.get('*', checkUser);
 router.post('*', checkUser);
 router.put('*', checkUser);
+router.delete('*', checkUser);
+
 router.get('/presences', verifyToken, async (req, res) => {
     var nowDate = new Date();
     var date = nowDate.getFullYear() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getDate();
