@@ -37,20 +37,29 @@ exports.login = async(req, res) => {
 
 exports.logout = async(req, res) => {
     try {
-        const userSchema = await User.findOne({
-            where:{
-                email: req.body.email
-            }
+        const user = await User.findByPk(req.id);
+        const userId = user.id;
+        const nama = user.nama;
+        const email = user.email;
+        // userSchema.token = null;
+        // await userSchema.save();
+        // res.status(200).json({
+        //     success: 'true', 
+        //     message: 'Logout successful',
+        //     data: {}
+        // });
+        // const authHeader = req.headers.authorization;
+        const token = jwt.sign({userId, nama, email}, process.env.API_SECRET, {
+            expiresIn: '1s'
         });
-        userSchema.token = null;
-        await userSchema.save();
+        // const token = jwt.sign(authHeader, "", { expiresIn: '1s' });
         res.status(200).json({
-            success: 'true', 
-            message: 'Logout successful',
-            data: {}
-        });
+                success: 'true', 
+                message: 'Logout successful',
+                token: token
+            });
     } catch (error) {
-        res.status(400).json({success: 'false', message: 'logout failed'});
+        res.status(400).json({success: 'false', message: 'logout failed', error: error});
     }
 }
 

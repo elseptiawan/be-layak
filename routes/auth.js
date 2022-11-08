@@ -6,13 +6,13 @@ logout,
 forgotPassword,
 resetPassword,
 } = require('../controllers/auth.controller');
-const { verifyToken } = require('../middleware/authJWT.js');
+const { verifyToken, checkUser } = require('../middleware/authJWT.js');
 
 /* Post Login */
 router.post('/login', login);
 
 /* Post Logout */
-router.post('/logout', verifyToken, logout);
+router.post('/logout', verifyToken, checkUser, logout);
 
 /* Post Forgot Password */
 router.post('/forgot-password', forgotPassword);
