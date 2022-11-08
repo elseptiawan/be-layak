@@ -4,11 +4,10 @@ var { User } = require('../models');
 
 exports.login = async(req, res) => {
     try {
-        const user = await User.findOne({
+        var user = await User.findOne({
             where:{
                 email: req.body.email
-            },
-            include : ['company']
+            }
         });
         const match = await bcrypt.compareSync(req.body.password, user.password);
         if(!match) return res.status(400).json({success: 'false', message: 'wrong password'});
@@ -18,6 +17,16 @@ exports.login = async(req, res) => {
 
         const token = jwt.sign({userId, nama, email}, process.env.API_SECRET, {
             expiresIn: '86400s'
+        });
+
+        user = await User.findOne({
+            where:{
+                email: req.body.email
+            },
+            attributes: {
+                exclude: ['password']
+            },
+            include : ['company']
         });
         
         res.json({success: 'true', data: user, token: token});
