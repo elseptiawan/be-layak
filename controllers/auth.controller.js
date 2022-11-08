@@ -41,18 +41,9 @@ exports.logout = async(req, res) => {
         const userId = user.id;
         const nama = user.nama;
         const email = user.email;
-        // userSchema.token = null;
-        // await userSchema.save();
-        // res.status(200).json({
-        //     success: 'true', 
-        //     message: 'Logout successful',
-        //     data: {}
-        // });
-        // const authHeader = req.headers.authorization;
         const token = jwt.sign({userId, nama, email}, process.env.API_SECRET, {
             expiresIn: '1s'
         });
-        // const token = jwt.sign(authHeader, "", { expiresIn: '1s' });
         res.status(200).json({
                 success: 'true', 
                 message: 'Logout successful',
