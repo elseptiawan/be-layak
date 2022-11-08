@@ -6,6 +6,7 @@ const { verifyToken, checkUser } = require('../middleware/authJWT.js');
 
 const { Leave, User } = require('../models');
 const v = new Validator();
+const { Op } = require("sequelize");
 
 const multerDiskStorage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -30,7 +31,28 @@ router.post('*', checkUser);
 router.get('/', verifyToken, async (req, res) => {
     const leave = await Leave.findAll({
         where: {
-            user_id: req.id
+            user_id: req.id,
+            status: "Pending"
+        },
+        include: {
+            model: User,
+            as: 'user',
+            attributes: {
+                exclude: ['password']
+            }
+        }
+    });
+
+    res.json({success: "true", messages: "Data retrieved successfully", data: leave}); 
+});
+
+router.get('/history', verifyToken, async (req, res) => {
+    const leave = await Leave.findAll({
+        where: {
+            user_id: req.id,
+            status: {
+                [Op.or] : ['Approved', 'Dec;ined']
+            }
         },
         include: {
             model: User,
