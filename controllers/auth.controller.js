@@ -7,7 +7,8 @@ exports.login = async(req, res) => {
         const user = await User.findOne({
             where:{
                 email: req.body.email
-            }
+            },
+            include : ['company']
         });
         const match = await bcrypt.compareSync(req.body.password, user.password);
         if(!match) return res.status(400).json({success: 'false', message: 'wrong password'});
@@ -19,7 +20,7 @@ exports.login = async(req, res) => {
             expiresIn: '86400s'
         });
         
-        res.json({success: 'true', token: token});
+        res.json({success: 'true', data: user, token: token});
     } catch (error) {
         res.status(400).json({success: 'false', message: 'wrong email'});
     }
