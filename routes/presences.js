@@ -55,10 +55,38 @@ router.get('/', verifyToken, async (req, res) => {
     res.json({success: "true", messages: "Data retrieved successfully", data: presences}); 
 });
 
+router.get('/today', verifyToken, async (req, res) => {
+    var nowDate = new Date(); 
+    var date = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate();
+    const presenceToday = await Presence.findOrCreate({
+        where: {
+            user_id: req.id,
+            createdAt: {
+                [Op.lt]: new Date(),
+                [Op.gt]: date
+              },
+        },
+        defaults: {
+            user_id: req.id,
+            createdAt: Date()
+        }
+    });
+
+    res.json({success: "true", messages: "Data retrieved successfully", data: presenceToday}); 
+});
+
 router.get('/:id', verifyToken, async (req, res) => {
     const presence = await Presence.findByPk(req.params.id,{
         include: ['user']
     });
+
+    if (!presence){
+        return res.json({success: "false", messages: "Data Not Found"});
+    }
+
+    if (presence.user_id != req.id){
+        return res.json({success: "true", messages: "You Don't Have Access to other user data"});
+    }
 
     res.json({success: "true", messages: "Data retrieved successfully", data: presence});
 });

@@ -89,7 +89,7 @@ router.get('/:id', verifyToken, async (req, res) => {
         return res.json({success: "false", messages: "Data Not Found"})
     }
 
-    if(leave.user.id != req.id){
+    if(leave.user_id != req.id){
         return res.json({success: "false", messages: "You Don't have access to other user data"})
     }
 
