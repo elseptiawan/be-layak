@@ -8,7 +8,12 @@ const multer = require('multer');
 
 const { User, Company, Presence, Leave, Reimbursement } = require('../models');
 
-const v = new Validator();
+const v = new Validator({
+    messages: {
+        unique: "The email is already exist"
+    }
+});
+
 const { Op } = require("sequelize");
 
 const multerDiskStorage = multer.diskStorage({
@@ -400,7 +405,7 @@ router.put('/leaves/upload-template-surat-cuti', verifyToken, multerUploadLeave.
 
 router.put('/leaves/:id', verifyToken, async (req, res) => {
     const schema = {
-        status: 'string|min:1',
+        status: 'string|empty:false',
         alasan_ditolak: 'string|optional'
     }
 
@@ -591,7 +596,7 @@ router.get('/reimbursement/:id', verifyToken, async (req, res) => {
 
 router.put('/reimbursement/:id', verifyToken, multerUpload.single('bukti_reimburse'), async (req, res) => {
     const schema = {
-        status: 'string|min:1',
+        status: 'string|empty:false',
         alasan_ditolak: 'string|optional'
     }
 
@@ -694,9 +699,10 @@ router.get('/users', verifyToken, async (req, res) => {
 
 router.post('/users', verifyToken, async (req, res) => {
     const schema = {
-        nama: 'string|min:1',
+        $$async: true,
+        nama: 'string|empty:false',
         email: 'email',
-        position: 'string|min:1',
+        position: 'string|empty:false',
     }
 
     const validate = v.validate(req.body, schema);
@@ -734,9 +740,9 @@ router.put('/users/:id', verifyToken, async (req, res) => {
     }
 
     const schema = {
-        nama: 'string|min:1',
+        nama: 'string|empty:false',
         email: 'email',
-        position: 'string|min:1',
+        position: 'string|empty:false',
         sisa_cuti: 'number|min:1'
     }
 

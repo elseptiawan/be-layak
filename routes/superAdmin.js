@@ -47,11 +47,11 @@ router.post('/companies', verifyToken, async (req, res) => {
     }
 
     const schema = {
-        nama: 'string|min:1',
+        nama: 'string|empty:false',
         email: 'email',
-        alamat: 'string|min:1',
+        alamat: 'string|empty:false',
         web: 'string|optional',
-        no_hp: 'string|min:1',
+        no_hp: 'string|empty:false',
         jatah_cuti: 'number'
     }
 
@@ -81,11 +81,11 @@ router.put('/companies/:id', verifyToken, async (req, res) => {
     }
 
     const schema = {
-        nama: 'string|min:1',
+        nama: 'string|empty:false',
         email: 'email',
-        alamat: 'string|min:1',
+        alamat: 'string|empty:false',
         web: 'string|optional',
-        no_hp: 'string|min:1',
+        no_hp: 'string|empty:false',
         jatah_cuti: 'number'
     }
 
@@ -169,9 +169,9 @@ router.get('/admin', verifyToken, async (req, res) => {
 
 router.post('/admin', verifyToken, async (req, res) => {
     const schema = {
-        nama: 'string|min:1',
-        email: 'string|min:1',
-        position: 'string|min:1',
+        nama: 'string|empty:false',
+        email: 'string|empty:false',
+        position: 'string|empty:false',
         company_id: 'number'
     }
 
@@ -199,9 +199,9 @@ router.post('/admin', verifyToken, async (req, res) => {
 
 router.put('/admin/:id', verifyToken, async (req, res) => {
     const schema = {
-        nama: 'string|min:1',
-        email: 'string|min:1',
-        position: 'string|min:1'
+        nama: 'string|empty:false',
+        email: 'string|empty:false',
+        position: 'string|empty:false'
     }
 
     const validate = v.validate(req.body, schema);

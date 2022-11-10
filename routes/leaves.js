@@ -98,7 +98,7 @@ router.get('/:id', verifyToken, async (req, res) => {
 
 router.post('/', verifyToken, multerUpload.single('surat_cuti'), async (req, res) => {
     const schema = {
-        tipe_cuti: 'string|min:1',
+        tipe_cuti: 'string|empty:false',
         start_date: {
             type: "date",
             convert: true
