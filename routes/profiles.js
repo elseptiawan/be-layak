@@ -30,7 +30,7 @@ const multerUpload = multer({storage: multerDiskStorage});
 router.put('*', checkUser);
 router.put('/edit-password', verifyToken, async (req, res) => {
     const schema = {
-        password: 'string',
+        password: 'string|min:1',
         new_password: 'string|min:6',
         confirm_new_password: 'string|min:6'
     }
@@ -67,7 +67,7 @@ router.put('/edit-photo', verifyToken, multerUpload.single('foto_profil'), async
     var user = await User.findByPk(req.id);
 
     user = await user.update({
-        foto_profil: foto_profil + '/' + foto_profil.filename
+        foto_profil: foto_profil.destination + '/' + foto_profil.filename
     });
 
     res.json({success: "true", messages: "Your photo profile have been changed succesfully"})
