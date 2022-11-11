@@ -128,8 +128,10 @@ router.post('/', verifyToken, multerUpload.single('surat_cuti'), async (req, res
 
     const user = await User.findByPk(req.id);
 
-    if (days > user.sisa_cuti){
-        return res.json({success: 'false', message: 'Sisa Cuti kurang dari total hari pengajuan'})
+    if(req.body.tipe_cuti != 'Hamil/melahirkan'){
+        if (days > user.sisa_cuti){
+            return res.json({success: 'false', message: 'Sisa Cuti kurang dari total hari pengajuan'})
+        }
     }
 
     const leave = await Leave.create({
