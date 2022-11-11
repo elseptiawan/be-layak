@@ -121,6 +121,17 @@ router.post('/', verifyToken, multerUpload.single('surat_cuti'), async (req, res
         return res.status(400).json({success: "false", messages: "Surat Cuti cannot be empty"});
     }
 
+    var start_date = new Date(req.body.start_date);
+    var end_date = new Date(req.body.end_date);
+    var days = end_date - start_date;
+    days = days / (1000 * 3600 * 24);
+
+    const user = await User.findByPk(req.id);
+
+    if (days > user.sisa_cuti){
+        return res.json({success: 'false', message: 'Sisa Cuti kurang dari total hari pengajuan'})
+    }
+
     const leave = await Leave.create({
         user_id: req.id,
         tipe_cuti: req.body.tipe_cuti,
