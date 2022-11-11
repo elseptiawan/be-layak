@@ -404,8 +404,6 @@ router.put('/leaves/upload-template-surat-cuti', verifyToken, multerUploadLeave.
 });
 
 router.put('/leaves/:id', verifyToken, async (req, res) => {
-    // var date = new Date("06/30/2019");
-    // return res.json(date.getMonth());
     const schema = {
         status: 'string|empty:false',
         alasan_ditolak: 'string|optional'
