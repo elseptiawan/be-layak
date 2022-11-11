@@ -716,7 +716,6 @@ router.get('/users', verifyToken, async (req, res) => {
 
 router.post('/users', verifyToken, async (req, res) => {
     const schema = {
-        $$async: true,
         nama: 'string|empty:false',
         email: 'email',
         position: 'string|empty:false',
@@ -726,6 +725,16 @@ router.post('/users', verifyToken, async (req, res) => {
 
     if (validate.length) {
         return res.status(400).json(validate);
+    }
+
+    const checkEmail = await User.findOne({
+        where: {
+            email: req.body.email
+        }
+    });
+
+    if(checkUser){
+        return res.json({type: 'uniqueEmail', message: 'Email already taken', field: 'uniqe', actual: req.body.email});
     }
 
     const admin = await User.findByPk(req.id);
@@ -746,7 +755,7 @@ router.post('/users', verifyToken, async (req, res) => {
         company_id: admin.company_id
     });
 
-    res.json({ success: "true", messages: "The account has been updated", data: user });
+    res.json({ success: "true", messages: "The account has been created", data: user });
 });
 
 router.put('/users/:id', verifyToken, async (req, res) => {
