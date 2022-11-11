@@ -51,7 +51,7 @@ router.get('/history', verifyToken, async (req, res) => {
         where: {
             user_id: req.id,
             status: {
-                [Op.or] : ['Approved', 'Dec;ined']
+                [Op.or] : ['Approved', 'Declined']
             }
         },
         include: {
