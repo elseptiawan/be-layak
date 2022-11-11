@@ -68,7 +68,7 @@ router.post('/companies', verifyToken, async (req, res) => {
     });
 
     if(checkEmail){
-        return res.json([{type: 'uniqueEmail', message: 'Email already taken', field: 'email', actual: req.body.email}]);
+        return res.status(400).json([{type: 'uniqueEmail', message: 'Email already taken', field: 'email', actual: req.body.email}]);
     }
 
     const company = await Company.create({
@@ -198,7 +198,7 @@ router.post('/admin', verifyToken, async (req, res) => {
     });
 
     if(checkEmail){
-        return res.json([{type: 'uniqueEmail', message: 'Email already taken', field: 'email', actual: req.body.email}]);
+        return res.status(400).json([{type: 'uniqueEmail', message: 'Email already taken', field: 'email', actual: req.body.email}]);
     }
 
     const company = await Company.findByPk(req.body.company_id);

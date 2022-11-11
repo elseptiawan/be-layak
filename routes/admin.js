@@ -734,7 +734,7 @@ router.post('/users', verifyToken, async (req, res) => {
     });
 
     if(checkEmail){
-        return res.json([{type: 'uniqueEmail', message: 'Email already taken', field: 'email', actual: req.body.email}]);
+        return res.status(400).json([{type: 'uniqueEmail', message: 'Email already taken', field: 'email', actual: req.body.email}]);
     }
 
     const admin = await User.findByPk(req.id);
