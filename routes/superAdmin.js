@@ -61,6 +61,16 @@ router.post('/companies', verifyToken, async (req, res) => {
         return res.status(400).json(validate);
     }
 
+    const checkEmail = await Company.findOne({
+        where: {
+            email: req.body.email
+        }
+    });
+
+    if(checkEmail){
+        return res.json({type: 'uniqueEmail', message: 'Email already taken', field: 'email', actual: req.body.email});
+    }
+
     const company = await Company.create({
         nama: req.body.nama,
         email: req.body.email,
@@ -179,6 +189,16 @@ router.post('/admin', verifyToken, async (req, res) => {
 
     if(validate.length){
         return res.status(400).json(validate);
+    }
+
+    const checkEmail = await User.findOne({
+        where: {
+            email: req.body.email
+        }
+    });
+
+    if(checkEmail){
+        return res.json({type: 'uniqueEmail', message: 'Email already taken', field: 'email', actual: req.body.email});
     }
 
     const company = await Company.findByPk(req.body.company_id);
