@@ -42,6 +42,9 @@ router.get('/', verifyToken, async (req, res) => {
         },
         defaults: {
             user_id: req.id,
+            clock_in: null,
+            clock_out: null,
+            foto: null,
             createdAt: Date()
         }
     });
@@ -68,6 +71,9 @@ router.get('/today', verifyToken, async (req, res) => {
         },
         defaults: {
             user_id: req.id,
+            clock_in: null,
+            clock_out: null,
+            foto: null,
             createdAt: Date()
         }
     });
