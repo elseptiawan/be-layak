@@ -404,6 +404,8 @@ router.put('/leaves/upload-template-surat-cuti', verifyToken, multerUploadLeave.
 });
 
 router.put('/leaves/:id', verifyToken, async (req, res) => {
+    // var date = new Date("06/30/2019");
+    // return res.json(date.getMonth());
     const schema = {
         status: 'string|empty:false',
         alasan_ditolak: 'string|optional'
@@ -431,6 +433,9 @@ router.put('/leaves/:id', verifyToken, async (req, res) => {
         }
     });
 
+    var start_date = new Date(leave.start_date);
+    var end_date = new Date(leave.end_date);
+
     if (leave.user.id == user.id) {
         return res.json({ success: "false", messages: "You Can't Approve/Decline Your Own Request" });
     }
@@ -439,7 +444,19 @@ router.put('/leaves/:id', verifyToken, async (req, res) => {
         return res.json({ success: "false", messages: "You Don't have access to other company employee" });
     }
 
-    leave = leave.update({
+    if (req.body.status == 'Approved'){
+        if(leave.tipe_cuti != 'Hamil/melahirkan'){
+            var days = end_date - start_date;
+            days = days / (1000 * 3600 * 24);
+            var employee = await User.findByPk(leave.user_id);
+            const sisa_cuti = employee.sisa_cuti - days;
+            employee.update({
+                sisa_cuti: sisa_cuti
+            })
+        }
+    }
+
+    leave.update({
         status: req.body.status
     });
 
