@@ -125,6 +125,7 @@ router.post('/', verifyToken, multerUpload.single('surat_cuti'), async (req, res
     var end_date = new Date(req.body.end_date);
     var days = end_date - start_date;
     days = days / (1000 * 3600 * 24);
+    days = days + 1;
 
     const user = await User.findByPk(req.id);
 

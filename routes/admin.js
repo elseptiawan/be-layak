@@ -446,6 +446,7 @@ router.put('/leaves/:id', verifyToken, async (req, res) => {
         if(leave.tipe_cuti != 'Hamil/melahirkan'){
             var days = end_date - start_date;
             days = days / (1000 * 3600 * 24);
+            days = days + 1;
             var employee = await User.findByPk(leave.user_id);
             const sisa_cuti = employee.sisa_cuti - days;
             employee.update({
