@@ -276,7 +276,8 @@ router.get('/leaves', verifyToken, async (req, res) => {
             attributes: {
                 exclude: ['password']
             }
-        }
+        },
+        order: [['id', 'DESC']]
     });
 
     res.json({ success: "true", messages: "Data retrieved successfully", data: leaves });
@@ -344,7 +345,8 @@ router.get('/leaves/history', verifyToken, async (req, res) => {
             attributes: {
                 exclude: ['password']
             }
-        }
+        },
+        order: [['id', 'DESC']]
     });
 
     res.json({ success: "true", messages: "Data retrieved successfully", data: leaves });
@@ -508,7 +510,8 @@ router.get('/reimbursement', verifyToken, async (req, res) => {
             attributes: {
                 exclude: ['password']
             }
-        }
+        },
+        order: [['id', 'DESC']]
     });
 
     res.json({ success: "true", messages: "Data retrieved successfully", data: reimbursements });
@@ -576,7 +579,8 @@ router.get('/reimbursement/history', verifyToken, async (req, res) => {
             attributes: {
                 exclude: ['password']
             }
-        }
+        },
+        order: [['id', 'DESC']]
     });
 
     res.json({ success: "true", messages: "Data retrieved successfully", data: reimbursements });

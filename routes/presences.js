@@ -52,7 +52,8 @@ router.get('/', verifyToken, async (req, res) => {
         where: {
             user_id: req.id
         },
-        include: ["user"]
+        include: ["user"],
+        order: [['id', 'DESC']]
     });
 
     res.json({success: "true", messages: "Data retrieved successfully", data: presences}); 

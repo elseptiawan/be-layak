@@ -40,7 +40,8 @@ router.get('/', verifyToken, async (req, res) => {
             attributes: {
                 exclude: ['password']
             }
-        }
+        },
+        order: [['id', 'DESC']]
     });
 
     res.json({success: "true", messages: "Data retrieved successfully", data: leave}); 
@@ -60,7 +61,8 @@ router.get('/history', verifyToken, async (req, res) => {
             attributes: {
                 exclude: ['password']
             }
-        }
+        },
+        order: [['id', 'DESC']]
     });
 
     res.json({success: "true", messages: "Data retrieved successfully", data: leave}); 
