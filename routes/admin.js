@@ -18,7 +18,7 @@ const { Op } = require("sequelize");
 
 const multerDiskStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'Storages/Bukti-Reimburse');
+        cb(null, 'public/Storages/Bukti-Reimburse');
     },
     filename: function (req, file, cb) {
         const originalName = file.originalname;
@@ -34,7 +34,7 @@ const multerDiskStorage = multer.diskStorage({
 
 const multerDiskStorageLeave = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'Storages/Template-Surat-Cuti');
+        cb(null, 'public/Storages/Template-Surat-Cuti');
     },
     filename: function (req, file, cb) {
         const originalName = file.originalname;
@@ -399,7 +399,7 @@ router.put('/leaves/upload-template-surat-cuti', verifyToken, multerUploadLeave.
     });
 
     company = company.update({
-        template_surat_cuti: template_surat_cuti.destination + '/' + template_surat_cuti.filename
+        template_surat_cuti: 'Storages/Template-Surat-Cuti/' + template_surat_cuti.filename
     });
 
     res.json ({success: "true", message: "Template Surat Cuti Has Been Uploaded"});
@@ -657,7 +657,7 @@ router.put('/reimbursement/:id', verifyToken, multerUpload.single('bukti_reimbur
     const bukti_reimburse = req.file;
     if (bukti_reimburse) {
         await Reimbursement.update({
-            bukti_reimburse: bukti_reimburse.destination + '/' + bukti_reimburse.filename
+            bukti_reimburse: 'Storages/Bukti-Reimburse/' + bukti_reimburse.filename
         }, {
             where: {
                 id: req.params.id

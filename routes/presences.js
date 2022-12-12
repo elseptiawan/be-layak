@@ -11,7 +11,7 @@ const { Op } = require("sequelize");
 
 const multerDiskStorage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, 'Storages/Presences');
+        cb(null, 'public/Storages/Presences');
     },
     filename: function(req, file, cb) {
         const originalName = file.originalname;
@@ -110,7 +110,7 @@ router.post('/clock-in', verifyToken, multerUpload.single('foto'), async (req, r
 
     const presence = await Presence.update({
         clock_in: time,
-        foto: foto.destination + '/' + foto.filename
+        foto: 'Storages/Presences/' + foto.filename
     },
     {
         where: {

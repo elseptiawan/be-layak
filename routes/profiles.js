@@ -11,7 +11,7 @@ const v = new Validator();
 
 const multerDiskStorage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, 'Storages/Profiles');
+        cb(null, 'public/Storages/Profiles');
     },
     filename: function(req, file, cb) {
         const originalName = file.originalname;
@@ -67,7 +67,7 @@ router.put('/edit-photo', verifyToken, multerUpload.single('foto_profil'), async
     var user = await User.findByPk(req.id);
 
     user = await user.update({
-        foto_profil: foto_profil.destination + '/' + foto_profil.filename
+        foto_profil: 'Storages/Profiles/' + foto_profil.filename
     });
 
     res.json({success: "true", messages: "Your photo profile have been changed succesfully"})

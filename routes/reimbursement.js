@@ -10,7 +10,7 @@ const { Op } = require("sequelize");
 
 const multerDiskStorage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, 'Storages/Reimbursements');
+        cb(null, 'public/Storages/Reimbursements');
     },
     filename: function(req, file, cb) {
         const originalName = file.originalname;
@@ -115,7 +115,7 @@ router.post('/', verifyToken, multerUpload.single('bukti_pembayaran'), async (re
         user_id: req.id,
         jumlah_uang: parseInt(req.body.jumlah_uang),
         tanggal_pembayaran: req.body.tanggal_pembayaran,
-        bukti_pembayaran: bukti_pembayaran.destination + '/' + bukti_pembayaran.filename,
+        bukti_pembayaran: 'Storages/Reimbursements/' + bukti_pembayaran.filename,
         kebutuhan: req.body.kebutuhan
     });
 
