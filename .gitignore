@@ -22,5 +22,6 @@
 
 .env
 Storages
+public/Storages
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode
